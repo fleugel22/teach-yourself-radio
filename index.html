@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>I/Q Signal Primer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400&display=swap');
+  :root{--bg:#0E1419;--panel:#141D25;--edge:#26343F;--ink:#ECE7DB;--sub:#8B98A3;--faint:#5A6973;--I:#E8B85C;--Q:#56C7BF;}
+  *{box-sizing:border-box;} html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;padding:64px 22px;}
+  .dots span{display:inline-block;width:11px;height:11px;border-radius:11px;margin-right:6px;vertical-align:middle;}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.05;margin:14px 0 10px;}
+  p.lede{font-size:16px;color:var(--sub);line-height:1.6;max-width:620px;}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:34px;}
+  @media(max-width:620px){.cards{grid-template-columns:1fr;}}
+  a.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--edge);
+    border-radius:12px;padding:20px;transition:border-color .15s,transform .15s;}
+  a.card:hover{border-color:var(--Q);transform:translateY(-2px);}
+  .num{font-family:'Space Mono',monospace;font-size:12px;color:var(--Q);}
+  .ct{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;color:var(--ink);margin:6px 0 6px;}
+  .cd{font-size:13px;color:var(--sub);line-height:1.5;}
+  footer{margin-top:44px;padding-top:18px;border-top:1px solid #18222B;font-size:12px;color:var(--faint);line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="dots"><span style="background:var(--I)"></span><span style="background:var(--Q)"></span><span class="eyebrow" style="display:inline">I/Q signal primer</span></div>
+  <h1>Understanding I/Q radio data</h1>
+  <p class="lede">An interactive, hands-on introduction to how radio signals are stored as I/Q data and how individual signals are pulled back out of a wideband capture. Built for people meeting radios for the first time — every plot is a live algorithm you can drag.</p>
+  <div class="cards">
+    <a class="card" href="part1.html">
+      <div class="num">Part 1</div>
+      <div class="ct">What lives inside an I/Q recording</div>
+      <div class="cd">The spinning arrow, many signals adding into one stream, the spectrum, and the bytes on disk.</div>
+    </a>
+    <a class="card" href="part2.html">
+      <div class="num">Part 2</div>
+      <div class="ct">Pulling one signal out of the mix</div>
+      <div class="cd">Tune, filter, decimate — the digital downconverter — plus the FFT filter-bank shortcut.</div>
+    </a>
+  </div>
+  <footer>I = in-phase · Q = quadrature. React is loaded from a CDN (esm.sh); the lesson code is local. Serve over http(s), not a file:// path.</footer>
+</div>
+</body>
+</html>
