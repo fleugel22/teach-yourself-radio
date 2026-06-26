@@ -183,6 +183,24 @@ function Sig({ color, sig, set, label }) {
     </div>
   );
 }
+function Deeper({ recap, example }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ marginTop: 18 }}>
+      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>
+        {open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}
+      </button>
+      {open && (
+        <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
+          <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.Q, marginBottom: 6 }}>So what just happened</div>
+          <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.sub, lineHeight: 1.62, margin: "0 0 16px" }}>{recap}</p>
+          <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.I, marginBottom: 8 }}>Worked example</div>
+          <div style={{ fontFamily: FONT.mono, fontSize: 12, color: C.ink, lineHeight: 1.65, background: C.bg, border: `1px solid ${C.gridFaint}`, borderRadius: 8, padding: "12px 14px", whiteSpace: "pre-wrap", overflowX: "auto" }}>{example}</div>
+        </div>
+      )}
+    </div>
+  );
+}
 function Lead({ n, title, body, notes }) {
   return (
     <div style={{ marginBottom: 20 }}>
@@ -359,6 +377,17 @@ function TuneModule({ reduced }) {
           </Panel>
         </div>
       </div>
+      <Deeper
+        recap="Tuning is a single complex multiply per sample: y[n] = x[n]\u00b7e^(\u2212j2\u03c0f\u2080n/Fs). Multiplying by a unit-magnitude exponential rotates every sample by a steadily growing angle, which slides the entire spectrum sideways by f\u2080. Park your target at 0 Hz and it stops spinning while everything else keeps moving \u2014 the first move in extracting it. Nothing is lost; the operation is exact and reversible."
+        example={`A tone at +3 Hz, sample rate Fs = 24, tune by f\u2080 = +3:
+   multiplier step per sample = e^(\u2212j2\u03c0\u00b73/24) = e^(\u2212j45\u00b0)
+   the +3 Hz tone  \u2192 lands at 0 Hz (stops rotating)
+   neighbour at +7 \u2192 shifts to +7 \u2212 3 = +4 Hz
+   neighbour at \u22122 \u2192 shifts to \u22122 \u2212 3 = \u22125 Hz
+
+Everything slides left by 3 Hz together. Your target now sits
+at DC, ready to be isolated by the low-pass filter next.`}
+      />
     </div>
   );
 }
@@ -454,6 +483,19 @@ function FilterModule({ reduced }) {
           </Panel>
         </div>
       </div>
+      <Deeper
+        recap="A low-pass FIR filter replaces each output sample with a weighted blend of nearby inputs; the weights (taps) are a windowed sinc, the shape with the cleanest cutoff. Slow variations \u2014 your now-centred signal \u2014 pass through, while fast ones (the neighbours you shifted away) are smoothed out. More taps mean a longer blend and a sharper wall, at the cost of more multiply-adds per sample."
+        example={`Cutoff fc = 2 Hz, sample rate Fs = 24. The ideal low-pass
+tap shape is a sinc, h[k] = 2(fc/Fs)\u00b7sinc(2(fc/Fs)\u00b7k), windowed.
+
+Effect on tones (gain):
+   signal centred at 0 Hz (inside fc)  \u2192 passes,   gain \u2248 1
+   neighbour now at +4 Hz (outside fc) \u2192 rejected, gain \u2248 0
+
+21 taps gives a gentle wall; 81 taps a steep one. No real
+filter is a perfect brick wall \u2014 expect a transition slope
+and a little stopband leakage.`}
+      />
     </div>
   );
 }
@@ -593,6 +635,19 @@ function DecimateModule({ reduced }) {
           </Panel>
         </div>
       </div>
+      <Deeper
+        recap="After tuning and filtering, your signal occupies only a sliver of the wideband stream, yet you're still storing samples at the full rate \u2014 mostly empty bandwidth. Decimating by M keeps every Mth sample, dropping the rate to Fs/M. As long as the filter already removed everything beyond \u00b1Fs/2M, nothing useful aliases, and you've turned a wideband capture into a compact baseband recording of one channel."
+        example={`Wideband Fs = 24, your filtered channel is 3 Hz wide.
+Decimate by M = 4 \u2192 new rate Fs/M = 6 (new window \u22123 \u2026 +3).
+
+Safety check: the filter must kill everything beyond \u00b1Fs/2M
+= \u00b13 Hz BEFORE downsampling. If a leftover tone at +5 Hz
+survived, after \u00f74 it folds to 5 \u2212 6 = \u22121 Hz \u2014 an alias
+landing right on your signal.
+
+Done right, 24 \u2192 6 is a 4\u00d7 smaller stream carrying the same
+information. Tune \u2192 filter \u2192 decimate = a digital downconverter.`}
+      />
     </div>
   );
 }
@@ -712,6 +767,17 @@ function FilterBankModule() {
           </Panel>
         </div>
       </div>
+      <Deeper
+        recap="Tuning-filtering-decimating extracts one channel. A single FFT does it for all of them at once: split a block of N samples into N frequency bins, and each bin behaves like one narrow channel already shifted to baseband and downsampled. It's the same channelization, shared across the whole band \u2014 which is why receivers that watch many signals at once use an FFT, and its efficient cousin the polyphase filter bank."
+        example={`A 1024-point FFT on a 24 Hz-wide capture splits it into 1024
+bins, each (24/1024) \u2248 0.023 Hz wide \u2014 1024 ready-made channels.
+   bin k \u2194 frequency  k\u00b7Fs/N   (wrapping past Fs/2 to negative)
+
+Windowing first (e.g. Hann) keeps each bin\u2019s energy from
+leaking into its neighbours \u2014 the skirts shrink. Run the FFT
+block after block, stack the rows, and you\u2019ve rebuilt the
+waterfall: every channel\u2019s output over time, all at once.`}
+      />
     </div>
   );
 }

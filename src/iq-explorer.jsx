@@ -340,6 +340,21 @@ function PhasorModule({ reduced }) {
           </Panel>
         </div>
       </div>
+      <Deeper
+        recap="A single complex sample isn't two separate numbers \u2014 it's one arrow in the plane. I is how far along the real axis, Q how far up the imaginary axis; together they fix the arrow's length (amplitude) and angle (phase). Play many samples per second and the arrow spins, and that rotation rate is the signal's frequency. Crucially, which way it spins distinguishes positive from negative frequency \u2014 the one thing a single real channel can't capture."
+        example={`One sample with I = 0.6, Q = 0.8:
+   amplitude = \u221a(I\u00b2+Q\u00b2) = \u221a(0.36+0.64) = 1.0
+   phase     = atan2(Q, I)  = atan2(0.8, 0.6) = 53.1\u00b0
+
+A 1 kHz tone sampled at 8 kHz turns 1000/8000 of a circle
+per sample = 45\u00b0 each step:
+   n=0: 0\u00b0    n=1: 45\u00b0    n=2: 90\u00b0    n=3: 135\u00b0 ...
+   I = cos(45\u00b0\u00b7n),  Q = sin(45\u00b0\u00b7n)
+
+Flip to \u22121 kHz and the arrow spins the other way (\u221245\u00b0/step).
+The I waveform looks identical; only Q's sign flips \u2014 which is
+exactly the \u00b1frequency information Q exists to carry.`}
+      />
     </div>
   );
 }
@@ -500,6 +515,19 @@ function SuperposModule({ reduced }) {
           </Panel>
         </div>
       </div>
+      <Deeper
+        recap="When several signals share the band the antenna doesn't receive a list of them \u2014 it receives their vector sum, one arrow that is the tip-to-tail addition of each signal's arrow at that instant. No information is destroyed, but it's entangled: the only handle on the parts is that each spins at its own rate, so the summed arrow's path over many samples carries their separate fingerprints."
+        example={`Two tones at one instant:
+   signal A:  0.50 \u2220 30\u00b0  = (0.433,  0.250)
+   signal B:  0.30 \u2220120\u00b0  = (\u22120.150, 0.260)
+   recorded sum             = (0.283,  0.510) = 0.583 \u2220 61\u00b0
+
+That single (0.283, 0.510) pair is everything the recorder
+stores for this instant. One sample later each arrow has
+rotated by its own frequency, so the sum lands somewhere new.
+Over many samples those two rotation rates trace a pattern an
+FFT can separate \u2014 which is the next module.`}
+      />
     </div>
   );
 }
@@ -678,6 +706,17 @@ function SpectrumModule({ reduced }) {
           </Panel>
         </div>
       </div>
+      <Deeper
+        recap="An FFT takes a block of I/Q samples and reports how much energy sits at each frequency, turning the spinning-arrow time view into a stack of peaks \u2014 one per signal. The window it can see spans the sample rate, from \u2212Fs/2 to +Fs/2 around your tuned centre. Signals beyond that edge don't disappear; they alias, folding back to a false frequency inside the window."
+        example={`Sample rate Fs = 24, so the visible window is \u221212 \u2026 +12.
+   a tone at +5   \u2192 peak at +5    (inside \u2014 fine)
+   a tone at +14  \u2192 14 is 2 past +12, so it folds to
+                     14 \u2212 24 = \u221210  \u2192 a FALSE peak at \u221210
+
+The rule: anything above +Fs/2 wraps down by Fs. That folding
+is aliasing \u2014 the reason you must sample fast enough (or filter
+first) to cover every signal you actually care about.`}
+      />
     </div>
   );
 }
@@ -787,6 +826,40 @@ function EncodingModule() {
           </Panel>
         </div>
       </div>
+      <Deeper
+        recap="On disk an I/Q file is just interleaved numbers \u2014 I\u2080, Q\u2080, I\u2081, Q\u2081, \u2026 with no header announcing what they mean. The ambiguity that bites people is the word \u2018complex32\u2019: it can mean 32 bits per component (two float32s, 8 bytes per sample) or 32 bits total (two 16-bit numbers, 4 bytes per sample). Guess wrong and every single sample is misread."
+        example={`A file of 1,000,000 bytes holding 125,000 samples:
+   1,000,000 / 125,000 = 8 bytes/sample
+   \u2192 two float32  (NumPy complex64, SigMF \u201ccf32\u201d)
+
+If it were 500,000 bytes for those same 125,000 samples:
+   500,000 / 125,000 = 4 bytes/sample
+   \u2192 two 16-bit values  (an int16 pair, or float16)
+
+Then sanity-check the values themselves: clustered near \u00b11
+\u2192 floats; swinging out to \u00b130,000 \u2192 int16. Size first to get
+bytes-per-sample, values second to pin the type.`}
+      />
+    </div>
+  );
+}
+
+/* ---------- deeper dive ---------- */
+function Deeper({ recap, example }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ marginTop: 18 }}>
+      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>
+        {open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}
+      </button>
+      {open && (
+        <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
+          <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.Q, marginBottom: 6 }}>So what just happened</div>
+          <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.sub, lineHeight: 1.62, margin: "0 0 16px" }}>{recap}</p>
+          <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.I, marginBottom: 8 }}>Worked example</div>
+          <div style={{ fontFamily: FONT.mono, fontSize: 12, color: C.ink, lineHeight: 1.65, background: C.bg, border: `1px solid ${C.gridFaint}`, borderRadius: 8, padding: "12px 14px", whiteSpace: "pre-wrap", overflowX: "auto" }}>{example}</div>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,8 +6,8 @@ so the only local payload is the lesson code itself (~31 KB each).
 
 ## Files
 - `index.html` — landing page linking to both lessons
-- `part1.html` / `part2.html` — the two lessons (import map + module script)
-- `part1.js` / `part2.js` — bundled lesson code (React kept external)
+- `part1.html` / `part2.html` / `part3.html` — the three lessons (import map + module script)
+- `part1.js` / `part2.js` / `part3.js` — bundled lesson code (React kept external)
 - `src/` — original `.jsx` source, if you want to edit and rebuild
 
 ## Host on GitHub Pages
