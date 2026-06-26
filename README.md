@@ -6,8 +6,10 @@ so the only local payload is the lesson code itself (~31 KB each).
 
 ## Files
 - `index.html` — landing page linking to both lessons
-- `part1.html` / `part2.html` / `part3.html` — the three lessons (import map + module script)
-- `part1.js` / `part2.js` / `part3.js` — bundled lesson code (React kept external)
+- `foundations.html`, `part1.html`, `modulation.html`, `part2.html`, `receiver.html`, `part3.html`, `advanced.html`, `lora.html` — the lessons (import map + module script)
+- `glossary.html` — standalone searchable glossary (no bundle; plain HTML/JS)
+- a sticky course-nav bar (prev/next + jump-anywhere) is built into every page
+- matching `*.js` — bundled lesson code (React kept external)
 - `src/` — original `.jsx` source, if you want to edit and rebuild
 
 ## Host on GitHub Pages

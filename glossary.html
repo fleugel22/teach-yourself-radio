@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>I/Q Signal Primer — Glossary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400&display=swap');
+  :root{--bg:#0E1419;--panel:#141D25;--panelHi:#1A2530;--edge:#26343F;--ink:#ECE7DB;--sub:#8B98A3;--faint:#5A6973;--I:#E8B85C;--Q:#56C7BF;}
+  *{box-sizing:border-box;} html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;}
+  .wrap{max-width:1000px;margin:0 auto;padding:32px 22px 64px;}
+  .dots span{display:inline-block;width:11px;height:11px;border-radius:11px;margin-right:6px;vertical-align:middle;}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.05;margin:12px 0 8px;}
+  p.lede{font-size:15px;color:var(--sub);line-height:1.6;max-width:680px;margin:0 0 22px;}
+  .search{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:10px 14px;max-width:520px;}
+  .search input{flex:1;background:transparent;border:none;outline:none;color:var(--ink);font-family:'Space Mono',monospace;font-size:14px;}
+  .search input::placeholder{color:var(--faint);}
+  #count{font-family:'Space Mono',monospace;font-size:11px;color:var(--faint);white-space:nowrap;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:22px;}
+  .gcard{background:var(--panel);border:1px solid var(--edge);border-left:2px solid var(--edge);border-radius:9px;padding:13px 15px;}
+  .gcat{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:5px;}
+  .gt{font-family:'Space Grotesk',sans-serif;font-size:15.5px;font-weight:600;color:var(--ink);margin-bottom:5px;}
+  .gd{font-size:12.5px;color:var(--sub);line-height:1.5;}
+  .empty{color:var(--faint);font-family:'Space Mono',monospace;font-size:13px;padding:30px 4px;}
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid #18222B;font-size:12px;color:var(--faint);line-height:1.6;}
+
+  .cbar{position:sticky;top:0;z-index:50;display:flex;gap:2px;align-items:center;background:#0E1419;border-bottom:1px solid #26343F;padding:7px 12px;flex-wrap:wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;}
+  .cbar a{color:#8B98A3;text-decoration:none;padding:5px 9px;border-radius:6px;white-space:nowrap;}
+  .cbar a:hover{color:#ECE7DB;background:#1A2530;}
+  .cbar a.cur{color:#56C7BF;background:#141D25;border:1px solid #26343F;}
+  .cbar .sp{flex:1;min-width:8px;}
+  .cbar a.nx{color:#E8B85C;} .cbar a.pv{color:#8B98A3;}
+</style>
+</head>
+<body>
+<nav class="cbar"><a href="index.html" title="home">⌂</a><a href="foundations.html">0·Found.</a><a href="part1.html">1·I/Q</a><a href="modulation.html">Mod.</a><a href="part2.html">2·DDC</a><a href="receiver.html">Rx</a><a href="part3.html">3·MIMO</a><a href="advanced.html">Adv</a><a href="lora.html">LoRa</a><a href="glossary.html" class="cur">Gloss.</a><span class="sp"></span><a class="pv" href="lora.html">‹ LoRa</a><a class="nx" href="index.html">Home ›</a></nav>
+<div class="wrap">
+  <div class="dots"><span style="background:var(--I)"></span><span style="background:var(--Q)"></span><span class="eyebrow" style="display:inline">I/Q signal primer · glossary</span></div>
+  <h1>Glossary</h1>
+  <p class="lede">Every term in the course, defined in a sentence or two. Type to filter by word or meaning — the colour tag shows which part it belongs to.</p>
+  <div class="search">
+    <span style="color:var(--faint)">⌕</span>
+    <input id="q" type="text" placeholder="search terms… (e.g. nyquist, costas, qam, svd)" autocomplete="off" />
+    <span id="count"></span>
+  </div>
+  <div id="grid" class="grid"></div>
+  <footer>I = in-phase · Q = quadrature. Terms span Foundations, Modulation, DSP/extraction, the Receiver back-end, and MIMO.</footer>
+</div>
+<script>
+const cats = {Foundations:'#E8B85C', Modulation:'#B49BE0', DSP:'#56C7BF', Receiver:'#E58AA6', MIMO:'#86D08A', Advanced:'#D6A35C'};
+const TERMS = [
+ ["I/Q (in-phase / quadrature)","Foundations","A signal written as complex samples: I is the real part, Q the imaginary part. Together they carry both amplitude and phase, and let the receiver tell positive frequencies from negative ones."],
+ ["In-phase (I)","Foundations","The real component of a complex sample — its projection onto the cosine (0°) axis."],
+ ["Quadrature (Q)","Foundations","The imaginary component — the projection onto the sine (90°) axis. Without it, +f and −f are indistinguishable."],
+ ["Phasor","Foundations","A rotating arrow in the complex plane standing for a sinusoid; its length is amplitude, its angle is phase, its spin rate is frequency."],
+ ["Sample rate (Fs)","Foundations","How many samples are taken per second. It sets the bandwidth you can represent: a window of ±Fs/2 around the tuned centre."],
+ ["Nyquist frequency","Foundations","Half the sample rate — the highest frequency that can be captured unambiguously."],
+ ["Aliasing","Foundations","When energy above Nyquist folds back to a false lower frequency, becoming indistinguishable from a real signal sitting there. Irreversible once sampled."],
+ ["Quantization","Foundations","Rounding each sample to the nearest of 2^b discrete ADC levels. The rounding error is quantization noise."],
+ ["Bit depth (b)","Foundations","Bits per sample. Each extra bit roughly halves the step size, adding about 6 dB of SNR (≈ 6.02·b + 1.76 dB)."],
+ ["SNR","Foundations","Signal-to-noise ratio: signal power divided by noise power, usually expressed in dB."],
+ ["Eb/N0","Foundations","Energy per bit over noise power-spectral-density — the fair SNR axis for comparing digital schemes regardless of their rate."],
+ ["AWGN","Foundations","Additive white Gaussian noise: the standard channel-noise model, flat across frequency and Gaussian in amplitude."],
+ ["BER (bit error rate)","Foundations","The fraction of received bits that are wrong — the headline measure of link quality."],
+ ["Quadrature demodulator","Foundations","The analog front end that makes I and Q: mix the RF against cos and −sin from a local oscillator, then low-pass filter each."],
+ ["Local oscillator (LO)","Foundations","The reference sinusoid the receiver mixes with to bring RF down to baseband."],
+ ["DC offset","Foundations","A constant added to I/Q (often LO leakage) that shifts the whole constellation off-centre."],
+ ["I/Q imbalance","Foundations","Gain or phase mismatch between the I and Q paths, which shears the constellation from a square into a parallelogram."],
+ ["Carrier","Modulation","The steady sinusoid whose amplitude, frequency, or phase is varied to carry a message."],
+ ["Modulation","Modulation","Impressing information onto a carrier by changing one of its properties."],
+ ["AM / FM / PM","Modulation","Amplitude, frequency, and phase modulation — varying the carrier's height, instantaneous frequency, or phase respectively."],
+ ["Modulation index","Modulation","How hard the carrier is modulated: depth for AM, peak frequency/phase deviation for FM/PM. It sets the occupied bandwidth."],
+ ["ASK / FSK / PSK / QAM","Modulation","Digital schemes mapping bits to amplitude levels, frequencies, phases, or a combined amplitude-and-phase grid."],
+ ["BPSK / QPSK","Modulation","Binary and quadrature phase-shift keying: 1 and 2 bits per symbol, on 2 and 4 phase points."],
+ ["Constellation","Modulation","The set of legal (I, Q) points a modulation scheme can send; each point is one symbol."],
+ ["Symbol","Modulation","One transmitted state, carrying log₂(M) bits for an M-point constellation."],
+ ["Baud (symbol rate)","Modulation","Symbols transmitted per second. Bandwidth tracks the baud, not the bit rate."],
+ ["Bit rate","Modulation","Baud × bits per symbol — how fast actual data flows."],
+ ["Gray coding","Modulation","Labelling adjacent constellation points so they differ by exactly one bit, so a near-miss costs one bit, not several."],
+ ["Spectral efficiency","Modulation","Bits per second per hertz — the headline efficiency number for a link."],
+ ["FFT","DSP","Fast Fourier transform: converts a block of samples into its frequency spectrum (and back)."],
+ ["Spectrum","DSP","Energy versus frequency — the FFT magnitude, showing one peak per signal."],
+ ["Waterfall","DSP","A spectrum stacked over time, so signals appear as vertical streaks."],
+ ["Mixer / NCO","DSP","Multiplying the signal by a complex exponential to shift it in frequency; the numerically-controlled oscillator generates that exponential."],
+ ["FIR low-pass filter","DSP","A finite-impulse-response filter that blends nearby samples by tap weights to keep low frequencies and reject high ones."],
+ ["Decimation","DSP","Throwing away samples to lower the rate after filtering, shrinking the stream once a signal is isolated."],
+ ["Channelization","DSP","Extracting one signal: tune it to baseband, low-pass filter, then decimate."],
+ ["Filter bank","DSP","Splitting a band into many channels at once — an FFT, or its efficient polyphase form."],
+ ["Pulse shaping","Receiver","Shaping each symbol's waveform so the transmitted spectrum stays compact."],
+ ["Root-raised-cosine (RRC)","Receiver","The usual pulse shape; an RRC at the transmitter and a matching one at the receiver combine into a zero-ISI raised cosine."],
+ ["Raised cosine","Receiver","A Nyquist pulse that is exactly zero at every other symbol instant, so symbols don't interfere at the sampling moment."],
+ ["Eye diagram","Receiver","Many two-symbol windows overlaid; the open 'eye' shows how much margin the decision has against noise and timing error."],
+ ["Matched filter","Receiver","The receiver filter matched to the pulse shape, which maximises SNR at the decision instant."],
+ ["ISI (inter-symbol interference)","Receiver","Neighbouring symbols bleeding into each other, closing the eye and causing errors."],
+ ["Carrier recovery","Receiver","Estimating and cancelling the receiver's carrier phase and frequency offset."],
+ ["Costas loop","Receiver","A phase-locked loop that recovers a suppressed carrier directly from the data-bearing samples."],
+ ["PLL / NCO","Receiver","Phase-locked loop, and the numerically-controlled oscillator it steers to track phase and frequency."],
+ ["Symbol-timing recovery","Receiver","Finding the right instant within each symbol to sample, so the eye is read at its widest."],
+ ["Gardner detector","Receiver","A timing-error detector that works at two samples per symbol and needs no carrier lock; its S-curve is zero at the correct instant."],
+ ["Slicer","Receiver","The decision device that maps each recovered sample to the nearest constellation point, then reads off its bits."],
+ ["Decision boundary","Receiver","The dividing line between constellation points' regions; crossing it causes a symbol error."],
+ ["MIMO","MIMO","Multiple-input multiple-output: several transmit and receive antennas used together."],
+ ["Spatial stream","MIMO","An independent data stream sent over the spatial dimension, on the same time and frequency as the others."],
+ ["Channel matrix (H)","MIMO","The grid of complex gains linking every transmit antenna to every receive antenna; y = Hx + noise."],
+ ["Zero-forcing","MIMO","Separating streams by multiplying the received vector by H⁻¹ — clean, but it amplifies noise on ill-conditioned channels."],
+ ["MMSE","MIMO","A detector that balances interference removal against noise amplification, beating zero-forcing at low SNR."],
+ ["SVD / singular value","MIMO","Decomposes H into independent parallel sub-channels; the singular values are their gains and set how many usable streams exist."],
+ ["Condition number","MIMO","σ_max / σ_min — how close the channel is to being non-invertible, and thus how much zero-forcing amplifies noise."],
+ ["Beamforming","MIMO","Phasing an antenna array to steer energy toward a target or place a null on an interferer."],
+ ["Null steering","MIMO","Choosing array weights orthogonal to an interferer's direction so its contribution cancels to zero."],
+ ["Diversity / Alamouti","MIMO","Sending data redundantly across antennas (and time) for reliability; Alamouti is the classic 2-antenna scheme. Trades rate for robustness."],
+ ["Multi-user MIMO","MIMO","One base station serving several users at once on the same time-frequency, each in its own spatial beam (zero-forcing precoding)."],
+ ["OFDM","MIMO","Splitting a wideband, frequency-selective channel into many narrow subcarriers, each seeing a flat gain."],
+ ["Subcarrier","MIMO","One narrowband carrier within an OFDM signal, multiplied by a single complex channel gain."],
+ ["Cyclic prefix","MIMO","A guard copy prepended to each OFDM symbol that absorbs the channel's echo and keeps subcarriers orthogonal."],
+ ["Resource grid","MIMO","The frequency × time (× spatial-layer) grid of independent channels that LTE/5G/Wi-Fi schedule data onto."],
+ ["Forward error correction (FEC)","Advanced","Adding structured parity bits so the receiver can repair errors with no retransmission."],
+ ["Coding gain","Advanced","The SNR a code saves: the horizontal gap between coded and uncoded BER curves at a target error rate."],
+ ["Hamming(7,4)","Advanced","A block code sending 4 data bits as 7; its syndrome locates and corrects any single-bit error in the block."],
+ ["Syndrome","Advanced","The receiver's parity re-checks; a nonzero pattern points straight at the bit to flip."],
+ ["Multipath","Advanced","The signal arriving by several paths of different length, producing delayed, scaled echoes."],
+ ["Delay spread","Advanced","The time between first and last significant echo; when it approaches a symbol it causes ISI."],
+ ["Frequency-selective fading","Advanced","Echoes adding and cancelling across frequency, carving deep notches into |H(f)|."],
+ ["Equalizer","Advanced","A filter that undoes the channel. Zero-forcing inverts H(f); MMSE balances inversion against noise."],
+ ["Noise enhancement","Advanced","A zero-forcing equalizer amplifying noise where |H(f)| is near zero (at a notch)."],
+ ["Spread spectrum","Advanced","Multiplying data by a fast +/-1 code to spread it over a wide band at low power density."],
+ ["Processing gain","Advanced","The interference suppression won by despreading, equal to the spreading factor: 10*log10(SF) dB."],
+ ["CDMA","Advanced","Code-division multiple access: many users share one band via different, often orthogonal, codes."],
+ ["Walsh code","Advanced","A set of mutually orthogonal +/-1 sequences (Hadamard rows) that separate CDMA users with zero cross-talk."],
+ ["Chirp spread spectrum (CSS)","Advanced","LoRa's modulation: data rides on linear chirps that sweep the whole band; where the sweep starts carries the symbol."],
+ ["Chirp","Advanced","A signal whose frequency sweeps linearly with time. An up-chirp rises across the band; a down-chirp falls."],
+ ["FHSS","Advanced","Frequency-hopping spread spectrum: the carrier jumps among many channels on a known pseudo-random pattern."],
+ ["LoRa","Advanced","A long-range low-power radio protocol built on chirp spread spectrum, decoded by dechirping then an FFT."],
+ ["Dechirp","Advanced","Multiplying a received chirp by a base down-chirp, collapsing it to a tone whose FFT bin is the symbol value."],
+ ["Spreading factor (SF)","Advanced","LoRa's key setting: bits per symbol. A symbol is 2^SF chips and the processing gain is 10*log10(2^SF) dB."],
+ ["Preamble","Advanced","Known repeated symbols (up-chirps in LoRa) the receiver locks onto to detect a frame and synchronize timing and frequency."]
+];
+const grid = document.getElementById('grid'), count = document.getElementById('count');
+function render(q){
+  q=(q||'').trim().toLowerCase(); grid.innerHTML='';
+  const hits = TERMS.filter(([t,c,d]) => !q || (t+' '+c+' '+d).toLowerCase().includes(q));
+  if(!hits.length){ const e=document.createElement('div'); e.className='empty'; e.textContent='no terms match “'+q+'”'; grid.appendChild(e); }
+  hits.forEach(([t,c,d])=>{ const el=document.createElement('div'); el.className='gcard'; el.style.borderLeftColor=cats[c]||'#26343F';
+    el.innerHTML='<div class="gcat" style="color:'+(cats[c]||'#8B98A3')+'">'+c+'</div><div class="gt"></div><div class="gd"></div>';
+    el.querySelector('.gt').textContent=t; el.querySelector('.gd').textContent=d; grid.appendChild(el); });
+  count.textContent = hits.length+' / '+TERMS.length+' terms';
+}
+document.getElementById('q').addEventListener('input', e=>render(e.target.value));
+render('');
+</script>
+</body>
+</html>

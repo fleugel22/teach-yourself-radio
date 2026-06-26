@@ -899,10 +899,27 @@ const MODULES = [
   { id: "04", label: "Inside the file", comp: EncodingModule },
 ];
 
+const DIFF = [1, 1, 2, 1];
+const PREDICTS = {"0": {"q": "Flip a tone from +1 kHz to -1 kHz. What changes in the samples?", "options": ["I flips sign", "Q flips sign", "both flip"], "answer": 1, "why": "I = cos is unchanged; only Q = sin flips sign. That is how Q encodes the direction of rotation."}, "2": {"q": "A tone at +13 Hz with Fs = 24. Where does the spectrum show it?", "options": ["+13 Hz", "+11 Hz", "-11 Hz"], "answer": 2, "why": "+13 is past the +12 edge, so it folds to 13 - 24 = -11 Hz."}};
+function Predict({ q, options, answer, why }) {
+  const [pick, setPick] = useState(null);
+  return (
+    <div style={{ background: C.panel, border: "1px solid " + C.edge, borderLeft: "2px solid " + C.I, borderRadius: 8, padding: "12px 14px", marginBottom: 16, maxWidth: 720 }}>
+      <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.I, marginBottom: 6 }}>Predict before you drag</div>
+      <div style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.ink, marginBottom: 10, lineHeight: 1.5 }}>{q}</div>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
+      </div>
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+    </div>
+  );
+}
+
 export default function App() {
   const reduced = usePrefersReducedMotion();
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => { try { const _h = parseInt((location.hash.match(/m(\d+)/) || [])[1], 10); if (_h >= 0 && _h < MODULES.length) return _h; } catch (_e) {} return 0; });
   const Comp = MODULES[active].comp;
+  useEffect(() => { try { history.replaceState(null, "", "#m" + active); } catch (_e) {} }, [active]);
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh", color: C.ink }}>
@@ -944,12 +961,13 @@ export default function App() {
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
             {MODULES.map((m, i) => (
               <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}>
-                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}
+                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span>
               </button>
             ))}
           </nav>
         </header>
 
+        {PREDICTS[active] && <Predict q={PREDICTS[active].q} options={PREDICTS[active].options} answer={PREDICTS[active].answer} why={PREDICTS[active].why} />}
         <main key={active}>
           <Comp reduced={reduced} />
         </main>

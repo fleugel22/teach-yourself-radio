@@ -1235,10 +1235,27 @@ const MODULES = [
   { id: "16", label: "OFDM × MIMO", comp: OFDMModule },
 ];
 
+const DIFF = [2, 3, 3, 2, 3, 3, 3, 3];
+const PREDICTS = {"1": {"q": "Two streams arrive with nearly identical signatures. Zero-forcing will...", "options": ["separate them cleanly", "amplify the noise enormously", "drop one stream"], "answer": 1, "why": "Near-parallel columns make H almost singular, so its inverse has huge entries that blow up the noise."}, "7": {"q": "OFDM turns one frequency-selective channel into...", "options": ["a single hard wideband channel", "many flat narrow subcarriers", "one pure tone"], "answer": 1, "why": "Each subcarrier is narrow enough to see a single flat gain, which makes per-subcarrier equalization trivial."}};
+function Predict({ q, options, answer, why }) {
+  const [pick, setPick] = useState(null);
+  return (
+    <div style={{ background: C.panel, border: "1px solid " + C.edge, borderLeft: "2px solid " + C.I, borderRadius: 8, padding: "12px 14px", marginBottom: 16, maxWidth: 720 }}>
+      <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.I, marginBottom: 6 }}>Predict before you drag</div>
+      <div style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.ink, marginBottom: 10, lineHeight: 1.5 }}>{q}</div>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
+      </div>
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+    </div>
+  );
+}
+
 export default function App() {
   const reduced = usePrefersReducedMotion();
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => { try { const _h = parseInt((location.hash.match(/m(\d+)/) || [])[1], 10); if (_h >= 0 && _h < MODULES.length) return _h; } catch (_e) {} return 0; });
   const Comp = MODULES[active].comp;
+  useEffect(() => { try { history.replaceState(null, "", "#m" + active); } catch (_e) {} }, [active]);
   return (
     <div style={{ background: C.bg, minHeight: "100vh", color: C.ink }}>
       <style>{`
@@ -1277,11 +1294,12 @@ export default function App() {
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
             {MODULES.map((m, i) => (
               <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}>
-                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}
+                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span>
               </button>
             ))}
           </nav>
         </header>
+        {PREDICTS[active] && <Predict q={PREDICTS[active].q} options={PREDICTS[active].options} answer={PREDICTS[active].answer} why={PREDICTS[active].why} />}
         <main key={active}><Comp reduced={reduced} /></main>
         <footer style={{ marginTop: 40, paddingTop: 18, borderTop: `1px solid ${C.gridFaint}`, fontFamily: FONT.body, fontSize: 12, color: C.faint, lineHeight: 1.6 }}>
           One antenna pair is a single complex gain; many pairs make a matrix. Inverting it separates streams, its SVD reveals how many are possible, and its phases let you aim. Frequency, then space — same idea, new dimension.

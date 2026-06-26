@@ -14,7 +14,7 @@
   .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);}
   h1{font-family:'Space Grotesk',sans-serif;font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.05;margin:14px 0 10px;}
   p.lede{font-size:16px;color:var(--sub);line-height:1.6;max-width:640px;}
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:34px;}
   @media(max-width:720px){.cards{grid-template-columns:1fr;}}
   a.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--edge);
     border-radius:12px;padding:20px;transition:border-color .15s,transform .15s;}
@@ -22,29 +22,69 @@
   .num{font-family:'Space Mono',monospace;font-size:12px;color:var(--Q);}
   .ct{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:var(--ink);margin:6px 0 6px;}
   .cd{font-size:13px;color:var(--sub);line-height:1.5;}
+  .lvl{display:inline-block;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-top:7px;}
+  .lvl.i{color:#86D08A;background:#15241c;} .lvl.m{color:#E8B85C;background:#241f12;} .lvl.a{color:#E58AA6;background:#241319;} .lvl.r{color:#56C7BF;background:#0f2522;} .lvl.w{color:#B49BE0;background:#1e1830;}
   footer{margin-top:44px;padding-top:18px;border-top:1px solid #18222B;font-size:12px;color:var(--faint);line-height:1.6;}
+
+  .cbar{position:sticky;top:0;z-index:50;display:flex;gap:2px;align-items:center;background:#0E1419;border-bottom:1px solid #26343F;padding:7px 12px;flex-wrap:wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;}
+  .cbar a{color:#8B98A3;text-decoration:none;padding:5px 9px;border-radius:6px;white-space:nowrap;}
+  .cbar a:hover{color:#ECE7DB;background:#1A2530;}
+  .cbar a.cur{color:#56C7BF;background:#141D25;border:1px solid #26343F;}
+  .cbar .sp{flex:1;min-width:8px;}
+  .cbar a.nx{color:#E8B85C;} .cbar a.pv{color:#8B98A3;}
 </style>
 </head>
 <body>
+<nav class="cbar"><a href="index.html" title="home">⌂</a><a href="foundations.html">0·Found.</a><a href="part1.html">1·I/Q</a><a href="modulation.html">Mod.</a><a href="part2.html">2·DDC</a><a href="receiver.html">Rx</a><a href="part3.html">3·MIMO</a><a href="advanced.html">Adv</a><a href="lora.html">LoRa</a><a href="glossary.html">Gloss.</a><span class="sp"></span><a class="nx" href="foundations.html">Foundations ›</a></nav>
 <div class="wrap">
   <div class="dots"><span style="background:var(--I)"></span><span style="background:var(--Q)"></span><span class="eyebrow" style="display:inline">I/Q signal primer</span></div>
   <h1>Understanding I/Q radio data</h1>
-  <p class="lede">A hands-on introduction to how radio signals are stored as I/Q data, how individual signals are pulled out of a wideband capture, and how multiple antennas carry parallel streams. Built for people meeting radios for the first time — every plot is a live algorithm you can drag.</p>
+  <p class="lede">A hands-on introduction to the groundwork of digital radio, how signals are modulated and stored as I/Q data, how individual signals are pulled out of a wideband capture, how a receiver turns them back into bits, and how multiple antennas carry parallel streams. Built for people meeting radios for the first time — every plot is a live algorithm you can drag.</p>
   <div class="cards">
+      <a class="card" href="foundations.html">
+        <div class="num">Foundations</div><div class="lvl i">Intro</div>
+        <div class="ct">The groundwork</div>
+        <div class="cd">Sampling theorem &amp; aliasing, quantization, noise/SNR with a live BER curve, and the quadrature demodulator.</div>
+      </a>
     <a class="card" href="part1.html">
-      <div class="num">Part 1</div>
+      <div class="num">Part 1</div><div class="lvl i">Intro</div>
       <div class="ct">Inside an I/Q recording</div>
       <div class="cd">The spinning arrow, many signals adding into one stream, the spectrum, and the bytes on disk.</div>
     </a>
+    <a class="card" href="modulation.html">
+      <div class="num">Modulation</div><div class="lvl m">Intermediate</div>
+      <div class="ct">How information rides a wave</div>
+      <div class="cd">AM/FM/PM, the digital schemes ASK/FSK/PSK/QAM, the constellation diagram, and baud vs bitrate.</div>
+    </a>
     <a class="card" href="part2.html">
-      <div class="num">Part 2</div>
+      <div class="num">Part 2</div><div class="lvl m">Intermediate</div>
       <div class="ct">Pulling one signal out</div>
       <div class="cd">Tune, filter, decimate — the digital downconverter — plus the FFT filter-bank shortcut.</div>
     </a>
+    <a class="card" href="receiver.html">
+      <div class="num">Receiver back-end</div><div class="lvl a">Advanced</div>
+      <div class="ct">From baseband samples to bits</div>
+      <div class="cd">Pulse shaping &amp; the eye diagram, Costas carrier recovery, Gardner timing recovery, and the slicer.</div>
+    </a>
     <a class="card" href="part3.html">
-      <div class="num">Part 3</div>
+      <div class="num">Part 3</div><div class="lvl a">Advanced</div>
       <div class="ct">MIMO &amp; spatial streams</div>
-      <div class="cd">Seven modules: the channel matrix, separating streams by space, the SVD parallel-pipes view, beamforming, diversity, multi-user MIMO, and single-antenna recovery.</div>
+      <div class="cd">Eight modules: the channel matrix, separating streams by space, the SVD parallel-pipes view, beamforming, diversity, multi-user MIMO, single-antenna recovery, and the OFDM × MIMO capstone.</div>
+    </a>
+    <a class="card" href="advanced.html">
+      <div class="num">Advanced</div><div class="lvl a">Advanced</div>
+      <div class="ct">When the channel fights back</div>
+      <div class="cd">Error-correction &amp; coding gain, multipath/ISI and the cyclic prefix, equalization (ZF vs MMSE), and spread spectrum / CDMA.</div>
+    </a>
+    <a class="card" href="lora.html">
+      <div class="num">Worked example</div><div class="lvl w">Capstone</div>
+      <div class="ct">Decoding LoRa, end to end</div>
+      <div class="cd">A full extraction chain on a real chirp-spread-spectrum signal: FHSS &amp; chirp, isolate the channel, dechirp + FFT, synchronize, read the payload bytes.</div>
+    </a>
+    <a class="card" href="glossary.html">
+      <div class="num">Glossary</div><div class="lvl r">Reference</div>
+      <div class="ct">Every term, defined</div>
+      <div class="cd">A searchable reference for ~65 terms across the whole course, from aliasing to zero-forcing.</div>
     </a>
   </div>
   <footer>I = in-phase · Q = quadrature. React is loaded from a CDN (esm.sh); the lesson code is local. Serve over http(s), not a file:// path.</footer>
