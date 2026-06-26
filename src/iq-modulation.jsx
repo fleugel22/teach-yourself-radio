@@ -159,7 +159,7 @@ function Deeper({ recap, example }) {
   return (
     <div style={{ marginTop: 18 }}>
       <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>
-        {open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}
+        {open ? "▾  hide the deeper dive" : "▸  go deeper — recap & a worked example"}
       </button>
       {open && (
         <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
@@ -230,7 +230,7 @@ function AnalogModModule() {
       const ctx = sc._ctx || (sc._ctx = fitCanvas(sc, sc.clientWidth, sc.clientHeight));
       const m = magSpec(sig); const w = sc.clientWidth, h = sc.clientHeight, half = N / 2;
       ctx.clearRect(0, 0, w, h); let mx = 0; for (let i = 0; i < half; i++) mx = Math.max(mx, m[i]);
-      ctx.fillStyle = C.faint; ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("frequency \u2192", 4, h - 5);
+      ctx.fillStyle = C.faint; ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("frequency →", 4, h - 5);
       for (let i = 0; i < half; i++) { const x = (i / half) * w, bh = (m[i] / mx) * (h - 22); ctx.strokeStyle = i === fc ? C.I : C.Q; ctx.globalAlpha = i === fc ? 1 : 0.85; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, h - 16); ctx.lineTo(x, h - 16 - bh); ctx.stroke(); }
       ctx.globalAlpha = 1;
     }
@@ -241,9 +241,9 @@ function AnalogModModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "AM varies the carrier\u2019s amplitude, FM its instantaneous frequency, PM its phase. \u2018Modulation index\u2019 sets how hard you push: depth for AM, the peak phase/frequency swing for PM/FM." },
-          { t: "Intuition", c: C.Q, x: "In the Part-1 rotating-arrow picture, AM stretches and shrinks the arrow\u2019s length while FM and PM speed up and slow down its spin. Amplitude vs angle \u2014 the two things a complex sample can carry." },
-          { t: "Heads up", c: C.warn, x: "AM is spectrally tidy: a carrier plus two sidebands. FM/PM smear energy into many sidebands and need more bandwidth as you raise the index \u2014 robustness traded for width." },
+          { t: "Term", c: C.A, x: "AM varies the carrier’s amplitude, FM its instantaneous frequency, PM its phase. ‘Modulation index’ sets how hard you push: depth for AM, the peak phase/frequency swing for PM/FM." },
+          { t: "Intuition", c: C.Q, x: "In the Part-1 rotating-arrow picture, AM stretches and shrinks the arrow’s length while FM and PM speed up and slow down its spin. Amplitude vs angle — the two things a complex sample can carry." },
+          { t: "Heads up", c: C.warn, x: "AM is spectrally tidy: a carrier plus two sidebands. FM/PM smear energy into many sidebands and need more bandwidth as you raise the index — robustness traded for width." },
         ]}
         n="04.1" title="Riding a carrier: AM, FM, and PM"
         body="Before bits, the basics: a message changes some property of a steady carrier wave. Amplitude modulation rides the message on the carrier's height; frequency and phase modulation ride it on the carrier's angle instead. Watch the waveform reshape and the spectrum sprout sidebands as you change the message and how hard it's modulated." />
@@ -263,28 +263,28 @@ function AnalogModModule() {
               <Slider label="Carrier frequency" value={fc} min={8} max={40} step={1} color={C.I} fmt={(v) => v + " cyc"} onChange={setFc} />
               <Slider label="Message frequency" value={fm} min={1} max={8} step={1} color={C.D} fmt={(v) => v + " cyc"} onChange={setFm} />
               <Slider label={idxLabel} value={idx} min={0} max={scheme === "AM" ? 1 : 6} step={0.05} color={C.B} fmt={(v) => v.toFixed(2)} onChange={setIdx} />
-              <button className="iq-mini" onClick={() => modTone(scheme === "AM" ? "AM" : "FM", 5, scheme === "AM" ? idx : 0.4 + idx / 6)} style={{ alignSelf: "start" }}>{"\u25b6"} listen ({scheme === "PM" ? "FM-style" : scheme})</button>
+              <button className="iq-mini" onClick={() => modTone(scheme === "AM" ? "AM" : "FM", 5, scheme === "AM" ? idx : 0.4 + idx / 6)} style={{ alignSelf: "start" }}>{"▶"} listen ({scheme === "PM" ? "FM-style" : scheme})</button>
             </div>
           </Panel>
           <Panel label="In I/Q terms">
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: 0, lineHeight: 1.55 }}>
-              {scheme === "AM" ? "AM lives in the magnitude \u221a(I\u00b2+Q\u00b2): the arrow keeps its angle but pulses longer and shorter with the message." : "FM/PM live in the angle atan2(Q, I): the arrow keeps its length but its rotation rate (FM) or offset (PM) tracks the message."}
+              {scheme === "AM" ? "AM lives in the magnitude √(I²+Q²): the arrow keeps its angle but pulses longer and shorter with the message." : "FM/PM live in the angle atan2(Q, I): the arrow keeps its length but its rotation rate (FM) or offset (PM) tracks the message."}
             </p>
           </Panel>
         </div>
       </div>
       <Deeper
-        recap="Modulation maps a message onto a carrier cos(2\u03c0f_c t). AM multiplies the carrier by (1 + depth\u00b7m(t)), so the message becomes the envelope. FM/PM instead add the message into the angle, cos(2\u03c0f_c t + \u03b8(t)), so amplitude stays put while the phase wiggles. The spectrum tells them apart: AM is a carrier plus a mirror-image pair of sidebands; angle modulation fans out into many sidebands."
+        recap="Modulation maps a message onto a carrier cos(2πf_c t). AM multiplies the carrier by (1 + depth·m(t)), so the message becomes the envelope. FM/PM instead add the message into the angle, cos(2πf_c t + θ(t)), so amplitude stays put while the phase wiggles. The spectrum tells them apart: AM is a carrier plus a mirror-image pair of sidebands; angle modulation fans out into many sidebands."
         example={`AM, message at f_m, depth m:
-   s(t) = (1 + m\u00b7cos2\u03c0f_m t)\u00b7cos2\u03c0f_c t
-        = cos2\u03c0f_c t                      (carrier)
-        + (m/2)\u00b7cos2\u03c0(f_c+f_m)t            (upper sideband)
-        + (m/2)\u00b7cos2\u03c0(f_c\u2212f_m)t            (lower sideband)
-   \u2192 occupied bandwidth = 2\u00b7f_m, exactly two sidebands.
+   s(t) = (1 + m·cos2πf_m t)·cos2πf_c t
+        = cos2πf_c t                      (carrier)
+        + (m/2)·cos2π(f_c+f_m)t            (upper sideband)
+        + (m/2)·cos2π(f_c−f_m)t            (lower sideband)
+   → occupied bandwidth = 2·f_m, exactly two sidebands.
 
-FM, peak deviation \u0394f, message f_m, index \u03b2 = \u0394f/f_m:
-   energy spreads to f_c \u00b1 k\u00b7f_m with weights J_k(\u03b2).
-   Carson's rule: bandwidth \u2248 2(\u03b2 + 1)\u00b7f_m \u2014 it grows with \u03b2,
+FM, peak deviation Δf, message f_m, index β = Δf/f_m:
+   energy spreads to f_c ± k·f_m with weights J_k(β).
+   Carson's rule: bandwidth ≈ 2(β + 1)·f_m — it grows with β,
    which is why the bars fan wider as you push the index.`}
       />
     </div>
@@ -330,7 +330,7 @@ function DigitalModModule() {
     const cc = cRef.current;
     if (cc) {
       const ctx = cc._ctx || (cc._ctx = fitCanvas(cc, cc.clientWidth, cc.clientHeight));
-      if (scheme === "2-FSK") { ctx.clearRect(0, 0, cc.clientWidth, cc.clientHeight); ctx.fillStyle = C.sub; ctx.font = `11px ${FONT.body}`; ctx.textAlign = "center"; ctx.fillText("FSK rides on frequency, not a", cc.clientWidth / 2, cc.clientHeight / 2 - 8); ctx.fillText("fixed set of points \u2014 see the", cc.clientWidth / 2, cc.clientHeight / 2 + 8); ctx.fillText("I/Q tones change speed.", cc.clientWidth / 2, cc.clientHeight / 2 + 24); }
+      if (scheme === "2-FSK") { ctx.clearRect(0, 0, cc.clientWidth, cc.clientHeight); ctx.fillStyle = C.sub; ctx.font = `11px ${FONT.body}`; ctx.textAlign = "center"; ctx.fillText("FSK rides on frequency, not a", cc.clientWidth / 2, cc.clientHeight / 2 - 8); ctx.fillText("fixed set of points — see the", cc.clientWidth / 2, cc.clientHeight / 2 + 8); ctx.fillText("I/Q tones change speed.", cc.clientWidth / 2, cc.clientHeight / 2 + 24); }
       else drawConstellation(ctx, cc.clientWidth, cc.clientHeight, cset, { range: scheme === "OOK" ? 1.3 : 1.5, labels: true, pointColor: C.A });
     }
   }, [scheme, seed]);
@@ -339,8 +339,8 @@ function DigitalModModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "Digital schemes map groups of bits to discrete states: ASK = amplitude levels, FSK = frequencies, PSK = phases, QAM = an amplitude\u00d7phase grid. Each distinct state is one symbol." },
-          { t: "Intuition", c: C.Q, x: "Watch I (amber) and Q (cyan) jump to a new pair each symbol period. Those (I, Q) pairs are exactly the dots in the constellation on the right \u2014 the alphabet the transmitter draws from." },
+          { t: "Term", c: C.A, x: "Digital schemes map groups of bits to discrete states: ASK = amplitude levels, FSK = frequencies, PSK = phases, QAM = an amplitude×phase grid. Each distinct state is one symbol." },
+          { t: "Intuition", c: C.Q, x: "Watch I (amber) and Q (cyan) jump to a new pair each symbol period. Those (I, Q) pairs are exactly the dots in the constellation on the right — the alphabet the transmitter draws from." },
           { t: "Try it", c: C.D, x: "Step from BPSK up to 16QAM: the same wires now carry more bits per symbol because there are more distinct (I, Q) states to land on. New bits reshuffles the random data." },
         ]}
         n="04.2" title="Sending bits: ASK, FSK, PSK, QAM"
@@ -366,15 +366,15 @@ function DigitalModModule() {
         </div>
       </div>
       <Deeper
-        recap="A digital modulator chops the bitstream into groups of log\u2082(M) bits and maps each group to one of M carrier states \u2014 a symbol. PSK puts those states at equal angles around the unit circle; QAM arranges them on a grid of amplitudes; ASK uses amplitude alone; FSK uses distinct frequencies (so it has no single fixed constellation). The transmitted I/Q waveform is just those symbol values, one per symbol period."
+        recap="A digital modulator chops the bitstream into groups of log₂(M) bits and maps each group to one of M carrier states — a symbol. PSK puts those states at equal angles around the unit circle; QAM arranges them on a grid of amplitudes; ASK uses amplitude alone; FSK uses distinct frequencies (so it has no single fixed constellation). The transmitted I/Q waveform is just those symbol values, one per symbol period."
         example={`QPSK, the scheme used in Part 3:
-   2 bits \u2192 1 of 4 phases. With Gray coding,
-     00 \u2192 ( +0.707, +0.707 )      01 \u2192 ( \u22120.707, +0.707 )
-     11 \u2192 ( \u22120.707, \u22120.707 )      10 \u2192 ( +0.707, \u22120.707 )
+   2 bits → 1 of 4 phases. With Gray coding,
+     00 → ( +0.707, +0.707 )      01 → ( −0.707, +0.707 )
+     11 → ( −0.707, −0.707 )      10 → ( +0.707, −0.707 )
    so the bitstream 00 11 10 ... sets (I,Q) to those pairs in turn.
 
-16QAM packs 4 bits into one of 16 grid points \u2014 four times the
-bits of BPSK per symbol \u2014 but the points sit closer together,
+16QAM packs 4 bits into one of 16 grid points — four times the
+bits of BPSK per symbol — but the points sit closer together,
 which (module 04.3) is what makes it need a cleaner channel.`}
       />
     </div>
@@ -408,9 +408,9 @@ function ConstellationModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "The constellation diagram is the I/Q plane plotting every legal symbol as a dot. Count the dots: M dots = log\u2082(M) bits per symbol. The grid lines between dots are the receiver\u2019s decision boundaries." },
+          { t: "Term", c: C.A, x: "The constellation diagram is the I/Q plane plotting every legal symbol as a dot. Count the dots: M dots = log₂(M) bits per symbol. The grid lines between dots are the receiver’s decision boundaries." },
           { t: "Intuition", c: C.Q, x: "Noise scatters each received dot into a fuzzy blob. As long as a blob stays on its own side of the boundaries, the symbol decodes correctly. Min distance between dots is the safety margin." },
-          { t: "Heads up", c: C.warn, x: "Gray coding labels neighbours so they differ by a single bit \u2014 a near-miss across one boundary corrupts only one bit, not several. It\u2019s why real systems almost always Gray-code." },
+          { t: "Heads up", c: C.warn, x: "Gray coding labels neighbours so they differ by a single bit — a near-miss across one boundary corrupts only one bit, not several. It’s why real systems almost always Gray-code." },
         ]}
         n="04.3" title="The constellation diagram"
         body="This is the picture QPSK kept appearing as in Part 3. Every modulation scheme is just a set of points in the I/Q plane — its constellation — and each point stands for one symbol carrying several bits. Raise the order to pack more bits per point, add noise to see the dots blur, and watch how the spacing between points decides whether they stay separable." />
@@ -443,16 +443,16 @@ function ConstellationModule() {
         </div>
       </div>
       <Deeper
-        recap="A constellation fixes the meaning of each (I, Q) point: M points carry log\u2082(M) bits each. The receiver picks the nearest point to what it got, so errors happen when noise exceeds half the distance to a neighbour \u2014 the whole game is the minimum distance d_min at a fixed average power. Gray coding orders the labels so adjacent points differ by one bit, making the common single-boundary slip cost just one bit."
+        recap="A constellation fixes the meaning of each (I, Q) point: M points carry log₂(M) bits each. The receiver picks the nearest point to what it got, so errors happen when noise exceeds half the distance to a neighbour — the whole game is the minimum distance d_min at a fixed average power. Gray coding orders the labels so adjacent points differ by one bit, making the common single-boundary slip cost just one bit."
         example={`Normalised to unit average power (so schemes compare fairly):
    BPSK   2 pts   d_min = 2.00   (1 bit/sym)
    QPSK   4 pts   d_min = 1.41   (2 bits/sym)
    16QAM  16 pts  d_min = 0.63   (4 bits/sym)
    64QAM  64 pts  d_min = 0.31   (6 bits/sym)
 
-Going QPSK \u2192 16QAM doubles the bits per symbol but cuts d_min
-by ~2.2\u00d7, i.e. you need about 20\u00b7log\u2081\u2080(1.41/0.63) \u2248 7 dB more
-SNR for the same error rate. Gray coding: QPSK 00\u219201\u219211\u219210
+Going QPSK → 16QAM doubles the bits per symbol but cuts d_min
+by ~2.2×, i.e. you need about 20·log₁₀(1.41/0.63) ≈ 7 dB more
+SNR for the same error rate. Gray coding: QPSK 00→01→11→10
 around the square, each step flipping exactly one bit.`}
       />
     </div>
@@ -489,16 +489,16 @@ function RateModule() {
       ctx.fillText(SCHEMES[m][0], x + bw0 / 2, h - padB + 13);
       ctx.fillStyle = C.faint; ctx.fillText(r.toFixed(1), x + bw0 / 2, h - padB - bh - 4);
     });
-    ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("bit rate (Mbit/s) at this baud \u2192", 4, padT + 8);
+    ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("bit rate (Mbit/s) at this baud →", 4, padT + 8);
   }, [rs, M, roll]);
 
   return (
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "Baud (symbol rate) = symbols per second. Bit rate = baud \u00d7 bits-per-symbol. They\u2019re only equal for 1-bit schemes like BPSK; everything richer sends several bits per symbol." },
-          { t: "Intuition", c: C.Q, x: "Bandwidth is set by the symbol rate, not the bit rate. So to go faster without more spectrum, you pack more bits into each symbol \u2014 climb to a higher-order constellation." },
-          { t: "Heads up", c: C.warn, x: "That climb isn\u2019t free: higher order means tighter points (module 04.3), so it demands more SNR. Real links pick the densest constellation the channel\u2019s SNR can support \u2014 adaptive modulation." },
+          { t: "Term", c: C.A, x: "Baud (symbol rate) = symbols per second. Bit rate = baud × bits-per-symbol. They’re only equal for 1-bit schemes like BPSK; everything richer sends several bits per symbol." },
+          { t: "Intuition", c: C.Q, x: "Bandwidth is set by the symbol rate, not the bit rate. So to go faster without more spectrum, you pack more bits into each symbol — climb to a higher-order constellation." },
+          { t: "Heads up", c: C.warn, x: "That climb isn’t free: higher order means tighter points (module 04.3), so it demands more SNR. Real links pick the densest constellation the channel’s SNR can support — adaptive modulation." },
         ]}
         n="04.4" title="Symbols vs bits, baud vs bitrate"
         body="The last piece of vocabulary, and the central tradeoff. You transmit symbols at some rate (the baud), and each symbol carries several bits depending on the constellation. Bandwidth tracks the symbol rate, so higher-order modulation buys more bitrate in the same bandwidth — paid for in required SNR. Slide the order and watch the bitrate climb and the SNR cost climb with it." />
@@ -534,17 +534,17 @@ function RateModule() {
         </div>
       </div>
       <Deeper
-        recap="Two rates, easy to confuse: the symbol rate (baud) is how many symbols leave per second, and the bit rate is that times the bits each symbol carries. A pulse-shaped signal occupies bandwidth \u2248 baud\u00b7(1 + roll-off), independent of the constellation, so the way to raise bit rate in fixed spectrum is to raise bits-per-symbol \u2014 a denser constellation \u2014 which costs SNR."
+        recap="Two rates, easy to confuse: the symbol rate (baud) is how many symbols leave per second, and the bit rate is that times the bits each symbol carries. A pulse-shaped signal occupies bandwidth ≈ baud·(1 + roll-off), independent of the constellation, so the way to raise bit rate in fixed spectrum is to raise bits-per-symbol — a denser constellation — which costs SNR."
         example={`Symbol rate Rs = 1 Msym/s, root-raised-cosine roll-off 0.25:
-   occupied bandwidth = 1 \u00d7 1.25 = 1.25 MHz  (same for all below)
+   occupied bandwidth = 1 × 1.25 = 1.25 MHz  (same for all below)
 
-   BPSK   1 bit/sym  \u2192 1 Mbit/s    spec.eff 0.80 bit/s/Hz
-   QPSK   2 bit/sym  \u2192 2 Mbit/s    spec.eff 1.60
-   16QAM  4 bit/sym  \u2192 4 Mbit/s    spec.eff 3.20
-   256QAM 8 bit/sym  \u2192 8 Mbit/s    spec.eff 6.40
+   BPSK   1 bit/sym  → 1 Mbit/s    spec.eff 0.80 bit/s/Hz
+   QPSK   2 bit/sym  → 2 Mbit/s    spec.eff 1.60
+   16QAM  4 bit/sym  → 4 Mbit/s    spec.eff 3.20
+   256QAM 8 bit/sym  → 8 Mbit/s    spec.eff 6.40
 
-Eightfold bit rate in the same 1.25 MHz \u2014 but 256QAM\u2019s points
-are ~26\u00d7 closer than BPSK\u2019s, needing far more SNR. The link
+Eightfold bit rate in the same 1.25 MHz — but 256QAM’s points
+are ~26× closer than BPSK’s, needing far more SNR. The link
 chooses the densest constellation its SNR allows.`}
       />
     </div>
@@ -572,7 +572,7 @@ function Predict({ q, options, answer, why }) {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
       </div>
-      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" — "}{why}</div>}
     </div>
   );
 }
@@ -618,7 +618,7 @@ export default function App() {
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
             {MODULES.map((m, i) => (
               <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}>
-                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span>
+                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"•"}</span>)}</span>
               </button>
             ))}
           </nav>

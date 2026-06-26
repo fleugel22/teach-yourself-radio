@@ -74,7 +74,7 @@ function Deeper({ recap, example }) {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ marginTop: 18 }}>
-      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>{open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}</button>
+      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>{open ? "▾  hide the deeper dive" : "▸  go deeper — recap & a worked example"}</button>
       {open && <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
         <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.Q, marginBottom: 6 }}>So what just happened</div>
         <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.sub, lineHeight: 1.62, margin: "0 0 16px" }}>{recap}</p>
@@ -93,7 +93,7 @@ function Predict({ q, options, answer, why }) {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
       </div>
-      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" — "}{why}</div>}
     </div>
   );
 }
@@ -125,7 +125,7 @@ function FECModule() {
     ctx.strokeStyle = C.gridFaint; ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "right";
     for (let dec = 0; dec >= -5; dec--) { const y = yOf(Math.pow(10, dec)); ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); ctx.fillText("1e" + dec, x0 - 4, y + 3); }
     ctx.textAlign = "center"; for (let e = 0; e <= EMAX; e += 2) { const x = xOf(e); ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke(); ctx.fillText(e + "", x, y1 + 13); }
-    ctx.fillText("Eb/N0 (dB) \u2192", (x0 + x1) / 2, h - 3);
+    ctx.fillText("Eb/N0 (dB) →", (x0 + x1) / 2, h - 3);
     const xc = xOf(cursor); ctx.strokeStyle = C.edge; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(xc, y0); ctx.lineTo(xc, y1); ctx.stroke(); ctx.setLineDash([]);
     ctx.strokeStyle = C.sub; ctx.lineWidth = 1.8; ctx.beginPath(); for (let e = 0; e <= EMAX; e += 0.25) { const x = xOf(e), y = yOf(uncoded(e)); e ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
     ctx.fillStyle = C.D; d.snrs.forEach((e, i) => { const b = d.mc[i]; if (b > 0) { ctx.beginPath(); ctx.arc(xOf(e), yOf(b), 2.6, 0, 7); ctx.fill(); } });
@@ -140,7 +140,7 @@ function FECModule() {
         notes={[
           { t: "Term", c: C.A, x: "Forward error correction adds structured redundancy (parity bits) so the receiver can detect and fix some errors with no retransmission. Hamming(7,4) sends 4 data bits as 7 and fixes any single-bit error in the block." },
           { t: "Intuition", c: C.Q, x: "Coding gain is the SNR you save: the horizontal gap between the coded and uncoded BER curves at a target error rate. It buys reliability for the price of rate and a little complexity." },
-          { t: "Heads up", c: C.warn, x: "Spending energy on parity only pays off below a crossover BER. Above it the rate penalty makes simple codes worse \u2014 which is why real systems use far stronger codes (convolutional, LDPC, turbo) that approach the Shannon limit." },
+          { t: "Heads up", c: C.warn, x: "Spending energy on parity only pays off below a crossover BER. Above it the rate penalty makes simple codes worse — which is why real systems use far stronger codes (convolutional, LDPC, turbo) that approach the Shannon limit." },
         ]}
         n="17" title="Forward error correction & coding gain"
         body="The BER curve from Foundations sets the cost of reliability in raw SNR. Coding changes the deal: add parity bits and the receiver can repair errors, shifting the whole curve left. Watch a real Hamming(7,4) code locate and fix a bit error from its syndrome, and see the coding gain it earns against the uncoded curve." />
@@ -176,15 +176,15 @@ function FECModule() {
         </div>
       </div>
       <Deeper
-        recap="A block code maps k data bits to n > k coded bits; the extra n\u2212k bits are parity that constrain which words are legal, so an error lands on an illegal word the decoder can often correct. Hamming(7,4) places 3 parity bits so any single-bit error produces a unique 3-bit syndrome pointing at the culprit. Because only 4 of every 7 transmitted bits are data, each coded bit carries 4/7 of the energy \u2014 the rate penalty \u2014 so coding gain only appears once correction outweighs that loss, at low BER. Stronger codes win much more."
+        recap="A block code maps k data bits to n > k coded bits; the extra n−k bits are parity that constrain which words are legal, so an error lands on an illegal word the decoder can often correct. Hamming(7,4) places 3 parity bits so any single-bit error produces a unique 3-bit syndrome pointing at the culprit. Because only 4 of every 7 transmitted bits are data, each coded bit carries 4/7 of the energy — the rate penalty — so coding gain only appears once correction outweighs that loss, at low BER. Stronger codes win much more."
         example={`Hamming(7,4): message m, parity p1=m1^m2^m4, p2=m1^m3^m4, p3=m2^m3^m4.
    send  [m1 m2 m3 m4 p1 p2 p3]
    syndrome at RX: 3 parity re-checks -> 3 bits.
         000 -> no error;  any other -> the bit to flip.
 
 Energy bookkeeping (rate R = 4/7):
-   each coded bit gets Ec = R\u00b7Eb, so channel BER p = Q(\u221a(2\u00b7R\u00b7Eb/N0))
-   block fails only if \u2265 2 of 7 bits flip.
+   each coded bit gets Ec = R·Eb, so channel BER p = Q(√(2·R·Eb/N0))
+   block fails only if ≥ 2 of 7 bits flip.
    -> crossover near 6 dB; ~0.5-1 dB gain by BER 1e-5 (modest, but free
       every packet). LDPC/turbo codes reach within ~1 dB of Shannon.`}
       />
@@ -222,8 +222,8 @@ function MultipathModule() {
       const ctx = tc._ctx || (tc._ctx = fitCanvas(tc, tc.clientWidth, tc.clientHeight)); const w = tc.clientWidth, h = tc.clientHeight, base = h - 22, pl = 8, span = w - 20; ctx.clearRect(0, 0, w, h);
       // symbol-boundary shading: one symbol period = (assume) 2 samples wide region marker at delay where echoes spill
       ctx.strokeStyle = C.gridFaint; ctx.beginPath(); ctx.moveTo(pl, base); ctx.lineTo(w - 8, base); ctx.stroke();
-      taps.forEach((v, i) => { if (Math.abs(v) < 1e-9) return; const x = pl + (i / 12) * span, y = base - v * (base - 14); ctx.strokeStyle = i === 0 ? C.D : C.B; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(x, base); ctx.lineTo(x, y); ctx.stroke(); ctx.fillStyle = i === 0 ? C.D : C.B; ctx.beginPath(); ctx.arc(x, y, 3.4, 0, 7); ctx.fill(); ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "center"; ctx.fillText("\u03c4" + i, x, base + 13); });
-      ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("direct path", pl, 12); ctx.fillStyle = C.B; ctx.fillText("echoes \u2192 spill into later symbols (ISI)", pl + 66, 12);
+      taps.forEach((v, i) => { if (Math.abs(v) < 1e-9) return; const x = pl + (i / 12) * span, y = base - v * (base - 14); ctx.strokeStyle = i === 0 ? C.D : C.B; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(x, base); ctx.lineTo(x, y); ctx.stroke(); ctx.fillStyle = i === 0 ? C.D : C.B; ctx.beginPath(); ctx.arc(x, y, 3.4, 0, 7); ctx.fill(); ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "center"; ctx.fillText("τ" + i, x, base + 13); });
+      ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("direct path", pl, 12); ctx.fillStyle = C.B; ctx.fillText("echoes → spill into later symbols (ISI)", pl + 66, 12);
     }
     const hc = hRef.current;
     if (hc) {
@@ -232,7 +232,7 @@ function MultipathModule() {
       ctx.strokeStyle = C.gridFaint; ctx.font = `9px ${FONT.mono}`; ctx.fillStyle = C.faint; ctx.textAlign = "right";
       [0, 1, 2].forEach((v) => { const y = (h - pad.b) - (v / 2) * (h - pad.b - pad.t); ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke(); ctx.fillText(v.toFixed(0), pad.l - 4, y + 3); });
       drawCurve(ctx, w, h, Hmag, C.Q, pad, 0, 2, true);
-      ctx.fillStyle = C.sub; ctx.textAlign = "center"; ctx.fillText("frequency (subcarrier) \u2192", w / 2, h - 4);
+      ctx.fillStyle = C.sub; ctx.textAlign = "center"; ctx.fillText("frequency (subcarrier) →", w / 2, h - 4);
     }
   }, [g2, g3, d3, cp]);
   return (
@@ -240,7 +240,7 @@ function MultipathModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "Multipath: the signal reaches the receiver by several routes of different length, so copies arrive at staggered delays. The spread between first and last arrival is the delay spread; together the echoes form the channel impulse response." },
-          { t: "Intuition", c: C.Q, x: "Echoes mean each symbol overlaps the next \u2014 inter-symbol interference. In the frequency domain the copies add and cancel, carving deep notches: the channel is frequency-selective, kind to some frequencies and brutal to others." },
+          { t: "Intuition", c: C.Q, x: "Echoes mean each symbol overlaps the next — inter-symbol interference. In the frequency domain the copies add and cancel, carving deep notches: the channel is frequency-selective, kind to some frequencies and brutal to others." },
           { t: "Heads up", c: C.warn, x: "This is exactly why OFDM prepends a cyclic prefix. A guard copy longer than the delay spread turns the messy linear convolution into a clean circular one, so every subcarrier sees a single flat gain again." },
         ]}
         n="18" title="Multipath, delay spread & ISI"
@@ -259,7 +259,7 @@ function MultipathModule() {
             <div style={{ display: "grid", gap: 15 }}>
               <Slider label="echo 1 gain (delay 2)" value={g2} min={0} max={0.9} step={0.05} color={C.B} fmt={(v) => v.toFixed(2)} onChange={setG2} />
               <Slider label="echo 2 gain" value={g3} min={0} max={0.9} step={0.05} color={C.B} fmt={(v) => v.toFixed(2)} onChange={setG3} />
-              <Slider label="echo 2 delay (samples)" value={d3} min={3} max={10} step={1} color={C.A} fmt={(v) => v + " \u03c4"} onChange={setD3} />
+              <Slider label="echo 2 delay (samples)" value={d3} min={3} max={10} step={1} color={C.A} fmt={(v) => v + " τ"} onChange={setD3} />
             </div>
           </Panel>
           <Panel label="Cyclic prefix">
@@ -272,13 +272,13 @@ function MultipathModule() {
         </div>
       </div>
       <Deeper
-        recap="Each echo is a delayed, scaled copy, so the received signal is the transmitted one convolved with the channel impulse response. Convolution in time is multiplication in frequency, and where delayed copies arrive out of phase they cancel \u2014 the notches. For single-carrier signals the overlap is ISI. OFDM sidesteps it: prepend the tail of each block as a cyclic prefix longer than the channel, and linear convolution becomes circular convolution, which the FFT diagonalizes into one gain H_k per subcarrier."
+        recap="Each echo is a delayed, scaled copy, so the received signal is the transmitted one convolved with the channel impulse response. Convolution in time is multiplication in frequency, and where delayed copies arrive out of phase they cancel — the notches. For single-carrier signals the overlap is ISI. OFDM sidesteps it: prepend the tail of each block as a cyclic prefix longer than the channel, and linear convolution becomes circular convolution, which the FFT diagonalizes into one gain H_k per subcarrier."
         example={`Channel taps h = [1, 0, ${g2}, 0, ${g3}] (delay spread ${d3} samples).
    |H(f)| = |FFT(h)|  -> notch depth ${Math.min(...Hmag).toFixed(2)} (paths cancel there).
 
-Cyclic prefix of length L \u2265 (taps\u22121):
+Cyclic prefix of length L ≥ (taps−1):
    copy last L samples of the block to the front.
-   RX strips them, FFTs -> Y_k = H_k \u00b7 X_k  exactly.
+   RX strips them, FFTs -> Y_k = H_k · X_k  exactly.
    (verified error here: ${iciErr < 1e-9 ? "~1e-16" : iciErr.toExponential(1)})
 Without it, energy from the previous block and wrap-around break
 orthogonality, so subcarriers interfere (inter-carrier interference).`}
@@ -316,7 +316,7 @@ function EqualizeModule() {
       const zf = Hmag.map((m) => 1 / Math.max(m, 1e-3)), mm = Hmag.map((m) => m / (m * m + N0)); const vmax = Math.max(3, Math.max(...zf) * 0.6);
       ctx.strokeStyle = C.gridFaint; ctx.font = `9px ${FONT.mono}`; ctx.fillStyle = C.faint; ctx.textAlign = "right"; [0, vmax / 2, vmax].forEach((v) => { const y = (h - pad.b) - (v / vmax) * (h - pad.b - pad.t); ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke(); ctx.fillText(v.toFixed(1), pad.l - 4, y + 3); });
       drawCurve(ctx, w, h, zf, C.warn, pad, 0, vmax); drawCurve(ctx, w, h, mm, C.D, pad, 0, vmax);
-      ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillStyle = C.warn; ctx.fillText("— ZF 1/|H|", pad.l + 4, pad.t + 10); ctx.fillStyle = C.D; ctx.fillText("— MMSE", pad.l + 4, pad.t + 23); ctx.fillStyle = C.sub; ctx.textAlign = "center"; ctx.fillText("frequency \u2192", w / 2, h - 3); }
+      ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillStyle = C.warn; ctx.fillText("— ZF 1/|H|", pad.l + 4, pad.t + 10); ctx.fillStyle = C.D; ctx.fillText("— MMSE", pad.l + 4, pad.t + 23); ctx.fillStyle = C.sub; ctx.textAlign = "center"; ctx.fillText("frequency →", w / 2, h - 3); }
     setStats({ mse: mse / cnt });
   }, [kind, snr]);
   const [stats, setStats] = useState({ mse: 0 });
@@ -325,8 +325,8 @@ function EqualizeModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "An equalizer is a filter that undoes the channel. Zero-forcing divides by H(f) to flatten it exactly; MMSE instead minimises total error, trading a little residual distortion for far less noise." },
-          { t: "Intuition", c: C.Q, x: "At a notch, H is tiny, so 1/H is huge \u2014 zero-forcing amplifies the noise there enormously. MMSE notices the noise and backs off near nulls, keeping the constellation tight." },
-          { t: "Heads up", c: C.warn, x: "At high SNR there is little noise to amplify, so ZF and MMSE agree. The gap opens at low SNR and on channels with deep notches \u2014 raise the channel echoes and drop the SNR to see ZF blow up." },
+          { t: "Intuition", c: C.Q, x: "At a notch, H is tiny, so 1/H is huge — zero-forcing amplifies the noise there enormously. MMSE notices the noise and backs off near nulls, keeping the constellation tight." },
+          { t: "Heads up", c: C.warn, x: "At high SNR there is little noise to amplify, so ZF and MMSE agree. The gap opens at low SNR and on channels with deep notches — raise the channel echoes and drop the SNR to see ZF blow up." },
         ]}
         n="19" title="Equalization: undoing the channel"
         body="Once multipath has smeared the constellation into a blur, the receiver flattens the channel back out. The simplest equalizer divides each subcarrier by its channel gain — zero-forcing — but that detonates the noise at any deep notch. MMSE balances flattening against noise. Watch the before/after constellation and the two equalizers' frequency responses as you change SNR." />
@@ -356,16 +356,16 @@ function EqualizeModule() {
         </div>
       </div>
       <Deeper
-        recap="Per subcarrier the channel is one complex gain H_k, so the received symbol is Y_k = H_k X_k + noise. Zero-forcing applies 1/H_k, recovering X_k exactly but scaling the noise by 1/|H_k| \u2014 catastrophic where |H_k| is near zero. MMSE applies H_k* / (|H_k|\u00b2 + N0): identical to ZF when noise is negligible, but it rolls off near notches where dividing through would amplify noise more than it helps."
-        example={`Per subcarrier:  Y = H\u00b7X + n.
-   ZF:   W = 1/H        -> X_hat = X + n/H      (noise \u00d7 1/|H|)
-   MMSE: W = H*/(|H|\u00b2+N0) -> limits noise gain near |H|\u22480
+        recap="Per subcarrier the channel is one complex gain H_k, so the received symbol is Y_k = H_k X_k + noise. Zero-forcing applies 1/H_k, recovering X_k exactly but scaling the noise by 1/|H_k| — catastrophic where |H_k| is near zero. MMSE applies H_k* / (|H_k|² + N0): identical to ZF when noise is negligible, but it rolls off near notches where dividing through would amplify noise more than it helps."
+        example={`Per subcarrier:  Y = H·X + n.
+   ZF:   W = 1/H        -> X_hat = X + n/H      (noise × 1/|H|)
+   MMSE: W = H*/(|H|²+N0) -> limits noise gain near |H|≈0
 
 Channel here: deepest notch |H| = ${Math.min(...Hmag).toFixed(2)}.
-   at SNR 5 dB:  ZF MSE \u2248 0.44,  MMSE \u2248 0.37   (MMSE wins)
-   at SNR 15 dB: ZF \u2248 MMSE \u2248 0.044            (noise too small to matter)
+   at SNR 5 dB:  ZF MSE ≈ 0.44,  MMSE ≈ 0.37   (MMSE wins)
+   at SNR 15 dB: ZF ≈ MMSE ≈ 0.044            (noise too small to matter)
 Equalization is the single-carrier cousin of OFDM's per-subcarrier
-divide \u2014 same idea, harder bookkeeping.`}
+divide — same idea, harder bookkeeping.`}
       />
     </div>
   );
@@ -407,7 +407,7 @@ function CDMAModule() {
     if (sc) {
       const ctx = sc._ctx || (sc._ctx = fitCanvas(sc, sc.clientWidth, sc.clientHeight)); const w = sc.clientWidth, h = sc.clientHeight; ctx.clearRect(0, 0, w, h);
       const third = w / 3; const panel = (x0, arr, col, label) => { const pad = { l: x0 + 6, r: 6, t: 14, b: 16 }, ww = third; const xl = pad.l, xr = x0 + ww - pad.r, yb = h - pad.b, yt = pad.t; ctx.strokeStyle = C.gridFaint; ctx.beginPath(); ctx.moveTo(xl, yb); ctx.lineTo(xr, yb); ctx.stroke(); ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.beginPath(); const half = arr.length / 2; for (let i = 0; i < arr.length; i++) { const fi = (i + half) % arr.length; const x = xl + (i / (arr.length - 1)) * (xr - xl), y = yb - arr[fi] * (yb - yt); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.fillStyle = col; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "center"; ctx.fillText(label, x0 + ww / 2, 10); };
-      panel(0, sd, C.I, "data (narrow)"); panel(third, sp, C.B, jam ? "spread + jammer" : "spread (wide)"); panel(third * 2, de, C.D, "despread \u2192 narrow");
+      panel(0, sd, C.I, "data (narrow)"); panel(third, sp, C.B, jam ? "spread + jammer" : "spread (wide)"); panel(third * 2, de, C.D, "despread → narrow");
       ctx.strokeStyle = C.edge; ctx.beginPath(); ctx.moveTo(third, 0); ctx.lineTo(third, h); ctx.moveTo(third * 2, 0); ctx.lineTo(third * 2, h); ctx.stroke();
     }
     const cc = chipRef.current;
@@ -424,9 +424,9 @@ function CDMAModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "Spread spectrum multiplies each data bit by a fast code of \u00b11 chips, smearing the signal across a wide band at low power density. Despreading with the same code collapses it back; the spreading factor (chips per bit) is the processing gain." },
-          { t: "Intuition", c: C.Q, x: "Despreading correlates with your code: your signal adds up coherently while interference \u2014 including a strong narrowband jammer \u2014 gets spread thin and averaged away. That is the processing gain, 10·log10(SF) dB." },
-          { t: "Heads up", c: C.warn, x: "CDMA gives every user a different code. With orthogonal Walsh codes their signals share the band yet despread cleanly to zero cross-talk \u2014 how multiple phones use one cell at once." },
+          { t: "Term", c: C.A, x: "Spread spectrum multiplies each data bit by a fast code of ±1 chips, smearing the signal across a wide band at low power density. Despreading with the same code collapses it back; the spreading factor (chips per bit) is the processing gain." },
+          { t: "Intuition", c: C.Q, x: "Despreading correlates with your code: your signal adds up coherently while interference — including a strong narrowband jammer — gets spread thin and averaged away. That is the processing gain, 10·log10(SF) dB." },
+          { t: "Heads up", c: C.warn, x: "CDMA gives every user a different code. With orthogonal Walsh codes their signals share the band yet despread cleanly to zero cross-talk — how multiple phones use one cell at once." },
         ]}
         n="20" title="Spread spectrum & CDMA"
         body="The last trick turns bandwidth into robustness. Multiply your bits by a fast pseudo-random code and the signal spreads into a low, noise-like floor; multiply again at the receiver and it snaps back while interference smears away. Give each user a different orthogonal code and many can share the same band at once — the principle behind CDMA and GPS." />
@@ -459,16 +459,16 @@ function CDMAModule() {
         </div>
       </div>
       <Deeper
-        recap="Multiplying by a \u00b11 chip sequence c (rate SF times the bit rate) spreads the signal's power over SF times the bandwidth, so its spectral density drops. The receiver multiplies by the same c again; since c\u00b7c = SF the wanted bit adds up coherently, while anything uncorrelated with c \u2014 noise, a jammer, another user's code \u2014 is multiplied by a pseudo-random sign and averages toward zero. Orthogonal Walsh codes make different users' cross-correlation exactly zero, so they coexist in one band; the suppression of everything else is the processing gain, 10\u00b7log10(SF) dB."
-        example={`Spread:   chips = bit \u00d7 code(SF chips).
-Despread: sum(chips \u00d7 code)/SF.
-   own signal: code\u00b7code = SF  -> recovers the bit.
-   other user (orthogonal): code_i\u00b7code_j = 0 -> vanishes.
-   jammer / noise: \u00d7 random signs -> averaged down by ~SF.
+        recap="Multiplying by a ±1 chip sequence c (rate SF times the bit rate) spreads the signal's power over SF times the bandwidth, so its spectral density drops. The receiver multiplies by the same c again; since c·c = SF the wanted bit adds up coherently, while anything uncorrelated with c — noise, a jammer, another user's code — is multiplied by a pseudo-random sign and averages toward zero. Orthogonal Walsh codes make different users' cross-correlation exactly zero, so they coexist in one band; the suppression of everything else is the processing gain, 10·log10(SF) dB."
+        example={`Spread:   chips = bit × code(SF chips).
+Despread: sum(chips × code)/SF.
+   own signal: code·code = SF  -> recovers the bit.
+   other user (orthogonal): code_i·code_j = 0 -> vanishes.
+   jammer / noise: × random signs -> averaged down by ~SF.
 
-Processing gain: SF = ${sf}  ->  10\u00b7log10(${sf}) = ${pg} dB.
+Processing gain: SF = ${sf}  ->  10·log10(${sf}) = ${pg} dB.
 This is why GPS works below the noise floor and why a cell serves
-many phones at once \u2014 each on its own code.`}
+many phones at once — each on its own code.`}
       />
     </div>
   );
@@ -530,7 +530,7 @@ export default function App() {
           </p>
           {reduced && <p style={{ fontFamily: FONT.mono, fontSize: 11, color: C.faint, marginTop: 10 }}>Reduced-motion on — all views are static and respond to controls.</p>}
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
-            {MODULES.map((m, i) => <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}><span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span></button>)}
+            {MODULES.map((m, i) => <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}><span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"•"}</span>)}</span></button>)}
           </nav>
         </header>
         {PREDICTS[active] && <Predict q={PREDICTS[active].q} options={PREDICTS[active].options} answer={PREDICTS[active].answer} why={PREDICTS[active].why} />}

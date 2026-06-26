@@ -79,7 +79,7 @@ function Deeper({ recap, example }) {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ marginTop: 18 }}>
-      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>{open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}</button>
+      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>{open ? "▾  hide the deeper dive" : "▸  go deeper — recap & a worked example"}</button>
       {open && <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
         <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.Q, marginBottom: 6 }}>So what just happened</div>
         <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.sub, lineHeight: 1.62, margin: "0 0 16px" }}>{recap}</p>
@@ -98,7 +98,7 @@ function Predict({ q, options, answer, why }) {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
       </div>
-      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" — "}{why}</div>}
     </div>
   );
 }
@@ -136,7 +136,7 @@ function SpreadModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "Spread-spectrum schemes deliberately use far more bandwidth than the data needs, to gain robustness and low power density. FHSS hops the carrier among many frequencies; chirp spread spectrum (CSS, used by LoRa) sweeps continuously across the band." },
-          { t: "Intuition", c: C.Q, x: "On a spectrogram (the Part-1 waterfall) FHSS is a scatter of short horizontal dashes jumping around; a LoRa chirp is a clean diagonal ramp. Both smear energy in the time\u2013frequency plane so a jammer or a fade can only hurt part of it." },
+          { t: "Intuition", c: C.Q, x: "On a spectrogram (the Part-1 waterfall) FHSS is a scatter of short horizontal dashes jumping around; a LoRa chirp is a clean diagonal ramp. Both smear energy in the time–frequency plane so a jammer or a fade can only hurt part of it." },
           { t: "Try it", c: C.D, x: "Read the LoRa frame top: several identical up-chirps (the preamble) to lock onto, two down-chirps (the start-of-frame delimiter), then the payload chirps whose starting frequencies carry the bits." },
         ]}
         n="L1" title="Spread in time: FHSS & chirp spread spectrum"
@@ -168,13 +168,13 @@ function SpreadModule() {
         </div>
       </div>
       <Deeper
-        recap="A LoRa symbol is a linear chirp that sweeps the whole bandwidth BW over 2^SF samples; the data is hidden in where the sweep starts (and wraps). Because the energy is spread across the band and across time, the average power density is tiny \u2014 the same spread-spectrum benefit as the codes in module 20, but achieved by sweeping instead of multiplying by a code. FHSS gets there a third way, by hopping the carrier. The preamble's repeated up-chirps give the receiver something known to synchronize against."
+        recap="A LoRa symbol is a linear chirp that sweeps the whole bandwidth BW over 2^SF samples; the data is hidden in where the sweep starts (and wraps). Because the energy is spread across the band and across time, the average power density is tiny — the same spread-spectrum benefit as the codes in module 20, but achieved by sweeping instead of multiplying by a code. FHSS gets there a third way, by hopping the carrier. The preamble's repeated up-chirps give the receiver something known to synchronize against."
         example={`LoRa frame layout (SF = 8, N = 256 chips/symbol):
    [ up-chirp x ${nPre} ]  [ down-chirp x 2 ]  [ payload chirps... ]
       preamble              SFD                  data
 
-Spreading: BW \u2248 125 kHz spread, data rate only ~hundreds of bps
-   -> processing gain 10\u00b7log10(256) \u2248 24 dB, so LoRa decodes
+Spreading: BW ≈ 125 kHz spread, data rate only ~hundreds of bps
+   -> processing gain 10·log10(256) ≈ 24 dB, so LoRa decodes
       well below the noise floor (verified next module).
 FHSS instead: carrier jumps among N channels on a known pattern;
    a narrowband interferer only catches the occasional hop.`}
@@ -213,7 +213,7 @@ function IsolateModule() {
         notes={[
           { t: "Term", c: C.A, x: "A capture is usually far wider than one signal. The digital downconverter from Part 2 extracts a channel: multiply by a complex exponential to slide it to 0 Hz (tune), low-pass to reject everything else (filter), then drop the sample rate (decimate)." },
           { t: "Intuition", c: C.Q, x: "Tuning re-centres the LoRa hump on 0 Hz; the low-pass keeps only its bandwidth; decimating throws away samples you no longer need. What is left is the LoRa signal alone, critically sampled and ready to demodulate." },
-          { t: "Heads up", c: C.warn, x: "Get the tune frequency slightly wrong and a residual offset remains \u2014 plus the filters add a group delay that nudges the symbol timing. Both are cleaned up by synchronization in L4; isolation only has to get the channel roughly centred." },
+          { t: "Heads up", c: C.warn, x: "Get the tune frequency slightly wrong and a residual offset remains — plus the filters add a group delay that nudges the symbol timing. Both are cleaned up by synchronization in L4; isolation only has to get the channel roughly centred." },
         ]}
         n="L2" title="Isolate the channel"
         body="The radio handed us a wide slice of spectrum with the LoRa signal sitting off to one side in noise. Before any chirp magic, reuse the digital downconverter: tune the signal down to baseband, filter to its bandwidth, and decimate. Slide the tuning until the hump is centred on zero." />
@@ -240,9 +240,9 @@ function IsolateModule() {
         </div>
       </div>
       <Deeper
-        recap="This is the digital downconverter applied to a real spread-spectrum signal. Multiplying the wideband samples by exp(\u2212j2\u03c0 f_tune n) shifts the chosen channel to baseband; the low-pass rejects the rest of the band and the out-of-band noise; decimation reduces the rate to roughly the signal bandwidth. The chirp\u2019s wide instantaneous bandwidth means the low-pass must pass the whole LoRa band, not just a tone."
+        recap="This is the digital downconverter applied to a real spread-spectrum signal. Multiplying the wideband samples by exp(−j2π f_tune n) shifts the chosen channel to baseband; the low-pass rejects the rest of the band and the out-of-band noise; decimation reduces the rate to roughly the signal bandwidth. The chirp’s wide instantaneous bandwidth means the low-pass must pass the whole LoRa band, not just a tone."
         example={`Wideband capture (oversampled x2), LoRa at +${off}:
-   tune:    y[n] = x[n]\u00b7e^(\u2212j2\u03c0\u00b7${off}\u00b7n)   -> hump moves to 0 Hz
+   tune:    y[n] = x[n]·e^(−j2π·${off}·n)   -> hump moves to 0 Hz
    filter:  31-tap windowed-sinc low-pass, cutoff ~0.24
    decimate: keep every 2nd sample -> critically sampled (fs = BW)
 
@@ -284,8 +284,8 @@ function DechirpModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "Dechirping multiplies the received symbol by a base down-chirp (the conjugate up-chirp). A shifted up-chirp times a down-chirp is a pure tone whose frequency equals the symbol value. An FFT then reads that value off as a single bin." },
-          { t: "Intuition", c: C.Q, x: "The sweep cancels: subtract the known ramp and only the constant starting offset remains, as a steady tone. This is the LoRa receiver in one move \u2014 dechirp, FFT, take the peak bin." },
-          { t: "Heads up", c: C.warn, x: "Coherently summing 256 chips into one FFT bin is the processing gain. Drop the SNR far below 0 dB and the peak still towers over the noise \u2014 which is why LoRa reaches for kilometres at milliwatts." },
+          { t: "Intuition", c: C.Q, x: "The sweep cancels: subtract the known ramp and only the constant starting offset remains, as a steady tone. This is the LoRa receiver in one move — dechirp, FFT, take the peak bin." },
+          { t: "Heads up", c: C.warn, x: "Coherently summing 256 chips into one FFT bin is the processing gain. Drop the SNR far below 0 dB and the peak still towers over the noise — which is why LoRa reaches for kilometres at milliwatts." },
         ]}
         n="L3" title="Dechirp & FFT — the heart of it"
         body="Here is the trick the whole scheme is built on. Multiply the incoming chirp by a down-chirp and the sweep vanishes, leaving a plain tone sitting at a frequency equal to the symbol's value. One FFT turns that tone into a single bright bin. Pick a symbol value and watch the chirp flatten into a tone and the FFT peak land exactly on it — even buried in noise." />
@@ -314,14 +314,14 @@ function DechirpModule() {
         </div>
       </div>
       <Deeper
-        recap="A LoRa symbol of value k is the base up-chirp multiplied by exp(j2\u03c0kn/N) \u2014 the same chirp, started k bins higher. The receiver multiplies by the base down-chirp exp(\u2212j(chirp phase)), which cancels the quadratic sweep and leaves exp(j2\u03c0kn/N): a tone at digital frequency k/N. An N-point FFT puts all that energy in bin k. Because the FFT sums N chips coherently while noise adds incoherently, the effective SNR rises by a factor N \u2014 the processing gain, 10\u00b7log10(N) dB."
-        example={`Sent:    s[n] = upchirp[n] \u00b7 e^(j2\u03c0\u00b7k\u00b7n/N)
-Dechirp: d[n] = s[n] \u00b7 conj(upchirp[n]) = e^(j2\u03c0\u00b7k\u00b7n/N)   (a tone)
+        recap="A LoRa symbol of value k is the base up-chirp multiplied by exp(j2πkn/N) — the same chirp, started k bins higher. The receiver multiplies by the base down-chirp exp(−j(chirp phase)), which cancels the quadratic sweep and leaves exp(j2πkn/N): a tone at digital frequency k/N. An N-point FFT puts all that energy in bin k. Because the FFT sums N chips coherently while noise adds incoherently, the effective SNR rises by a factor N — the processing gain, 10·log10(N) dB."
+        example={`Sent:    s[n] = upchirp[n] · e^(j2π·k·n/N)
+Dechirp: d[n] = s[n] · conj(upchirp[n]) = e^(j2π·k·n/N)   (a tone)
 FFT(d):  one peak at bin k  -> symbol = k.   (verified for all 256)
 
-Processing gain (SF = 8): 10\u00b7log10(256) = 24.1 dB.
-   chip SNR \u221210 dB -> ~97% symbols correct
-   chip SNR \u221213 dB -> ~69% correct
+Processing gain (SF = 8): 10·log10(256) = 24.1 dB.
+   chip SNR −10 dB -> ~97% symbols correct
+   chip SNR −13 dB -> ~69% correct
 The chips are below the noise; the bin is not.`}
       />
     </div>
@@ -355,8 +355,8 @@ function SyncModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "Synchronization finds two unknowns before decoding: symbol timing (where each symbol window starts) and carrier frequency offset (the receiver and transmitter oscillators never match exactly). LoRa estimates both from the known preamble." },
-          { t: "Intuition", c: C.Q, x: "A window straddling two symbols dechirps to a split peak \u2014 energy in two bins \u2014 so sharpening the peak finds the timing. A frequency offset slides every bin by a fixed amount, which the known preamble symbol (value 0) measures directly." },
-          { t: "Heads up", c: C.warn, x: "Timing and CFO interact \u2014 in real LoRa the up-chirp and down-chirp peaks move oppositely, so their sum gives CFO and their difference gives timing. Here, line the window up and lock to the preamble to clean both." },
+          { t: "Intuition", c: C.Q, x: "A window straddling two symbols dechirps to a split peak — energy in two bins — so sharpening the peak finds the timing. A frequency offset slides every bin by a fixed amount, which the known preamble symbol (value 0) measures directly." },
+          { t: "Heads up", c: C.warn, x: "Timing and CFO interact — in real LoRa the up-chirp and down-chirp peaks move oppositely, so their sum gives CFO and their difference gives timing. Here, line the window up and lock to the preamble to clean both." },
         ]}
         n="L4" title="Synchronize: timing & frequency"
         body="The isolated signal has a residual timing offset (from the filters) and a frequency offset (mismatched oscillators). Both wreck the FFT peak if ignored. Slide the symbol window and watch the peak split when it straddles two symbols and snap sharp when aligned; add a frequency offset and watch every bin shift, then lock to the known preamble to subtract it." />
@@ -383,13 +383,13 @@ function SyncModule() {
         </div>
       </div>
       <Deeper
-        recap="Before the dechirp-FFT can be trusted, the symbol window must start on a symbol boundary and the carrier offset must be removed. A misaligned window contains the tail of one symbol and the head of the next, so dechirping produces two tones \u2014 a split FFT peak; the timing that maximises the peak (or its sharpness) is the right one. A carrier frequency offset adds a constant digital frequency, shifting every FFT bin by the same amount; the preamble is a known symbol (value 0), so its measured bin is exactly that shift, to be subtracted from every payload symbol."
-        example={`Timing:  window offset \u03c4 -> peak splits between the two symbols.
-   ratio peak/2nd: aligned \u2192 huge;  half-symbol off \u2192 ~1.
+        recap="Before the dechirp-FFT can be trusted, the symbol window must start on a symbol boundary and the carrier offset must be removed. A misaligned window contains the tail of one symbol and the head of the next, so dechirping produces two tones — a split FFT peak; the timing that maximises the peak (or its sharpness) is the right one. A carrier frequency offset adds a constant digital frequency, shifting every FFT bin by the same amount; the preamble is a known symbol (value 0), so its measured bin is exactly that shift, to be subtracted from every payload symbol."
+        example={`Timing:  window offset τ -> peak splits between the two symbols.
+   ratio peak/2nd: aligned → huge;  half-symbol off → ~1.
 Frequency: offset of m bins -> every peak moves to (k + m) mod N.
    preamble symbol is 0, so its peak reads m directly.
-   payload: corrected = (peak \u2212 m) mod N.
-Real LoRa: up-chirp peak \u221d (\u03b5 + \u03c4), down-chirp peak \u221d (\u03b5 \u2212 \u03c4)
+   payload: corrected = (peak − m) mod N.
+Real LoRa: up-chirp peak ∝ (ε + τ), down-chirp peak ∝ (ε − τ)
    -> sum = CFO, difference = timing. The SFD down-chirps are
       there precisely to make this separation possible.`}
       />
@@ -431,8 +431,8 @@ function PayloadModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "With the frame synchronized, decoding is mechanical: dechirp + FFT each payload symbol to a bin, undo the Gray mapping LoRa applies, and the result is the data \u2014 here, one byte per symbol (SF = 8)." },
-          { t: "Intuition", c: C.Q, x: "Each chirp's starting frequency is a number 0\u2013255; reverse the Gray code and that number is a byte. String the bytes together and the payload appears. The error-correction and whitening layers sit on top of exactly this." },
+          { t: "Term", c: C.A, x: "With the frame synchronized, decoding is mechanical: dechirp + FFT each payload symbol to a bin, undo the Gray mapping LoRa applies, and the result is the data — here, one byte per symbol (SF = 8)." },
+          { t: "Intuition", c: C.Q, x: "Each chirp's starting frequency is a number 0–255; reverse the Gray code and that number is a byte. String the bytes together and the payload appears. The error-correction and whitening layers sit on top of exactly this." },
           { t: "Try it", c: C.D, x: "Step through the frame and watch the message assemble one character at a time, each from a single FFT peak. Lower the SNR and the processing gain still pulls the bytes out clean." },
         ]}
         n="L5" title="Read the payload"
@@ -464,7 +464,7 @@ function PayloadModule() {
         </div>
       </div>
       <Deeper
-        recap="Each payload symbol is one dechirp-FFT away from a bin number. LoRa Gray-codes the symbol value before transmission so that a near-miss in the FFT (an adjacent bin) corrupts only one bit; the receiver applies the inverse Gray map to recover the data value. At SF = 8 each value is a full byte, so the bytes are the payload directly. Real LoRa then adds Hamming forward error correction, interleaving across symbols, and data whitening \u2014 all layered on top of this same dechirp-FFT-Gray core."
+        recap="Each payload symbol is one dechirp-FFT away from a bin number. LoRa Gray-codes the symbol value before transmission so that a near-miss in the FFT (an adjacent bin) corrupts only one bit; the receiver applies the inverse Gray map to recover the data value. At SF = 8 each value is a full byte, so the bytes are the payload directly. Real LoRa then adds Hamming forward error correction, interleaving across symbols, and data whitening — all layered on top of this same dechirp-FFT-Gray core."
         example={`Per payload symbol:
    dechirp + FFT -> peak bin b
    value = invGray(b)            (undo LoRa's Gray coding)
@@ -472,7 +472,7 @@ function PayloadModule() {
 
 Message "${msg}" -> bytes ${[...msg].map((c) => c.charCodeAt(0)).join(", ")}
    tx bins (Gray): ${payloadBins.join(", ")}
-   decode -> ${[...msg].map((c) => c.charCodeAt(0)).join(", ")} -> "${msg}"  \u2713
+   decode -> ${[...msg].map((c) => c.charCodeAt(0)).join(", ")} -> "${msg}"  ✓
 Above this core: Hamming(CR) FEC, diagonal interleaving, whitening.`}
       />
     </div>
@@ -536,7 +536,7 @@ export default function App() {
           </p>
           {reduced && <p style={{ fontFamily: FONT.mono, fontSize: 11, color: C.faint, marginTop: 10 }}>Reduced-motion on — all views are static and respond to controls.</p>}
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
-            {MODULES.map((m, i) => <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}><span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span></button>)}
+            {MODULES.map((m, i) => <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}><span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"•"}</span>)}</span></button>)}
           </nav>
         </header>
         {PREDICTS[active] && <Predict q={PREDICTS[active].q} options={PREDICTS[active].options} answer={PREDICTS[active].answer} why={PREDICTS[active].why} />}

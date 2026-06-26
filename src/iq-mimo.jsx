@@ -22,7 +22,7 @@ const FONT = {
 };
 
 /* ---------- generic helpers ---------- */
-const sgn = (x, d = 2) => (x >= 0 ? "+" : "\u2212") + Math.abs(x).toFixed(d);
+const sgn = (x, d = 2) => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(d);
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 const R2 = Math.SQRT1_2;
 
@@ -205,7 +205,7 @@ function Deeper({ recap, example }) {
   return (
     <div style={{ marginTop: 18 }}>
       <button onClick={() => setOpen(!open)} className="iq-mini" data-on={open ? "1" : "0"} style={{ fontSize: 11.5, padding: "7px 13px" }}>
-        {open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}
+        {open ? "▾  hide the deeper dive" : "▸  go deeper — recap & a worked example"}
       </button>
       {open && (
         <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
@@ -308,9 +308,9 @@ function ChannelModule({ reduced }) {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "Channel matrix H: stack the path gains into a grid. Entry h\u2c7c\u1d62 is the complex gain (an arrow: magnitude + phase) from transmit antenna i to receive antenna j. The whole link is y = Hx + noise." },
-          { t: "Intuition", c: C.Q, x: "It\u2019s Part 1\u2019s superposition again \u2014 but in space. Send different data from each antenna and every receive antenna hears the weighted sum of all of them. One mixture per receiver." },
-          { t: "Try it", c: C.D, x: "The two received clouds look like scrambled blobs \u2014 no single antenna can read either stream alone. Yet two antennas hearing two different mixtures is exactly enough to solve for both, which is the next lesson." },
+          { t: "Term", c: C.A, x: "Channel matrix H: stack the path gains into a grid. Entry hⱼᵢ is the complex gain (an arrow: magnitude + phase) from transmit antenna i to receive antenna j. The whole link is y = Hx + noise." },
+          { t: "Intuition", c: C.Q, x: "It’s Part 1’s superposition again — but in space. Send different data from each antenna and every receive antenna hears the weighted sum of all of them. One mixture per receiver." },
+          { t: "Try it", c: C.D, x: "The two received clouds look like scrambled blobs — no single antenna can read either stream alone. Yet two antennas hearing two different mixtures is exactly enough to solve for both, which is the next lesson." },
         ]}
         n="09" title="Many antennas: the channel becomes a matrix"
         body="MIMO means multiple transmit and multiple receive antennas. Every transmit–receive pair has its own path with its own gain and phase, so the channel is no longer a single number — it's a matrix H of complex coefficients. Send one symbol per transmit antenna at the same time and frequency, and each receive antenna captures a different weighted sum of them all." />
@@ -347,21 +347,21 @@ function ChannelModule({ reduced }) {
         </div>
       </div>
       <Deeper
-        recap="You're watching y = Hx + n. Two antennas transmit the symbol pair x = [x\u2081, x\u2082]; the 2\u00d72 matrix H mixes them, so each receive antenna captures a different blend. No single antenna sees a clean stream \u2014 but because the two blends differ, two equations in two unknowns are enough to recover both, which is exactly what the next module does."
-        example={`Take \u0394 = 90\u00b0, so
+        recap="You're watching y = Hx + n. Two antennas transmit the symbol pair x = [x₁, x₂]; the 2×2 matrix H mixes them, so each receive antenna captures a different blend. No single antenna sees a clean stream — but because the two blends differ, two equations in two unknowns are enough to recover both, which is exactly what the next module does."
+        example={`Take Δ = 90°, so
   H = [ 0.707      0.707     ]
-      [ 0.5\u22120.5j   0.5+0.5j  ]
+      [ 0.5−0.5j   0.5+0.5j  ]
 
 Transmit pattern A,  x = [ 1,  1 ]:
-  y\u2081 = 0.707\u00b71 + 0.707\u00b71         = 1.414
-  y\u2082 = (0.5\u22120.5j) + (0.5+0.5j)   = 1.0
+  y₁ = 0.707·1 + 0.707·1         = 1.414
+  y₂ = (0.5−0.5j) + (0.5+0.5j)   = 1.0
 
-Transmit pattern B,  x = [ 1, \u22121 ]:
-  y\u2081 = 0.707 \u2212 0.707            = 0
-  y\u2082 = (0.5\u22120.5j) \u2212 (0.5+0.5j) = \u2212j
+Transmit pattern B,  x = [ 1, −1 ]:
+  y₁ = 0.707 − 0.707            = 0
+  y₂ = (0.5−0.5j) − (0.5+0.5j) = −j
 
 Same two antennas, but the two patterns leave completely
-different fingerprints at the receiver: (1.414, 1) vs (0, \u2212j).
+different fingerprints at the receiver: (1.414, 1) vs (0, −j).
 That difference is what makes the streams separable.`}
       />
     </div>
@@ -406,9 +406,9 @@ function DetectModule({ reduced }) {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "Zero-forcing: multiply the received vector by H\u207b\u00b9 to undo the channel exactly, x\u0302 = H\u207b\u00b9y. With as many receive antennas as streams, the mixtures form a solvable system of equations." },
-          { t: "Intuition", c: C.Q, x: "Same idea as the FFT in Part 2 \u2014 a linear operation un-mixes the sum. There the axis was frequency; here it\u2019s space, set by where the antennas sit and how the paths differ." },
-          { t: "Heads up", c: C.warn, x: "When the two streams\u2019 spatial signatures are nearly identical, inverting the channel blows up the noise \u2014 the recovered clouds explode. That\u2019s an ill-conditioned channel; MMSE handles it more gracefully than ZF." },
+          { t: "Term", c: C.A, x: "Zero-forcing: multiply the received vector by H⁻¹ to undo the channel exactly, x̂ = H⁻¹y. With as many receive antennas as streams, the mixtures form a solvable system of equations." },
+          { t: "Intuition", c: C.Q, x: "Same idea as the FFT in Part 2 — a linear operation un-mixes the sum. There the axis was frequency; here it’s space, set by where the antennas sit and how the paths differ." },
+          { t: "Heads up", c: C.warn, x: "When the two streams’ spatial signatures are nearly identical, inverting the channel blows up the noise — the recovered clouds explode. That’s an ill-conditioned channel; MMSE handles it more gracefully than ZF." },
         ]}
         n="10" title="Separate the streams by inverting the channel"
         body="Each receive antenna gave a different equation in the same unknowns (the transmitted symbols). Stack them and solve the linear system: zero-forcing multiplies by H⁻¹ to peel the streams apart, recovering one clean constellation per stream. It works beautifully when the spatial signatures differ — and falls apart, amplifying noise, when they don't." />
@@ -438,27 +438,27 @@ function DetectModule({ reduced }) {
           <Panel label="Channel health">
             <Readout rows={[
               ["separability  |sin(Δ/2)|", sepPct + "%", sepPct > 50 ? C.D : C.warn],
-              ["condition number  σ\u2081/σ\u2082", info.cond.toFixed(1), info.cond < 4 ? C.D : C.warn],
+              ["condition number  σ₁/σ₂", info.cond.toFixed(1), info.cond < 4 ? C.D : C.warn],
             ]} />
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: "12px 0 0", lineHeight: 1.55 }}>
-              A condition number near 1 is a healthy channel. As it grows, H\u207b\u00b9 magnifies noise; switch to <span style={{ color: C.ink }}>MMSE</span> at low separation to see it trade a little bias for far less noise blow-up.
+              A condition number near 1 is a healthy channel. As it grows, H⁻¹ magnifies noise; switch to <span style={{ color: C.ink }}>MMSE</span> at low separation to see it trade a little bias for far less noise blow-up.
             </p>
           </Panel>
         </div>
       </div>
       <Deeper
-        recap="Zero-forcing solves the linear system by multiplying the received vector by H\u207b\u00b9: x\u0302 = H\u207b\u00b9y. With a healthy channel and modest noise the symbols return cleanly. The danger lives inside H\u207b\u00b9 \u2014 when the two columns of H point nearly the same way the determinant shrinks, the inverse's entries blow up, and the noise is amplified along with the signal. MMSE replaces H\u207b\u00b9 with (H\u1d34H + \u03c3\u00b2I)\u207b\u00b9H\u1d34, capping that blow-up by tolerating a little leftover mixing."
-        example={`For this channel  |det H| = sin(\u0394/2),
-and H\u207b\u00b9 scales the noise by about  1 / sin(\u0394/2):
+        recap="Zero-forcing solves the linear system by multiplying the received vector by H⁻¹: x̂ = H⁻¹y. With a healthy channel and modest noise the symbols return cleanly. The danger lives inside H⁻¹ — when the two columns of H point nearly the same way the determinant shrinks, the inverse's entries blow up, and the noise is amplified along with the signal. MMSE replaces H⁻¹ with (HᴴH + σ²I)⁻¹Hᴴ, capping that blow-up by tolerating a little leftover mixing."
+        example={`For this channel  |det H| = sin(Δ/2),
+and H⁻¹ scales the noise by about  1 / sin(Δ/2):
 
-  \u0394 = 120\u00b0  \u2192  sin 60\u00b0 = 0.87  \u2192  noise \u00d71.15   (barely)
-  \u0394 =  60\u00b0  \u2192  sin 30\u00b0 = 0.50  \u2192  noise \u00d72.0
-  \u0394 =  30\u00b0  \u2192  sin 15\u00b0 = 0.26  \u2192  noise \u00d73.9    (cloud bursts)
-  \u0394 =  10\u00b0  \u2192  sin  5\u00b0 = 0.087 \u2192  noise \u00d711     (unusable)
+  Δ = 120°  →  sin 60° = 0.87  →  noise ×1.15   (barely)
+  Δ =  60°  →  sin 30° = 0.50  →  noise ×2.0
+  Δ =  30°  →  sin 15° = 0.26  →  noise ×3.9    (cloud bursts)
+  Δ =  10°  →  sin  5° = 0.087 →  noise ×11     (unusable)
 
 That multiplier is the condition number at work: as the two
 spatial signatures align, separating them costs ever more
-amplified noise. Drop SNR or \u0394 and watch the clusters smear
+amplified noise. Drop SNR or Δ and watch the clusters smear
 into each other.`}
       />
     </div>
@@ -550,9 +550,9 @@ function PipesModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "SVD: any channel factors as H = UΣVᴴ. With the right precoding (V) and combining (U), MIMO turns into min(Nt,Nr) independent scalar channels whose gains are the singular values σ\u1d62." },
-          { t: "Intuition", c: C.Q, x: "Picture parallel pipes of different widths. How many carry useful data = the channel\u2019s rank. Rich scattering opens several fat pipes (many streams); pure line-of-sight leaves one (just one stream)." },
-          { t: "Heads up", c: C.warn, x: "More antennas only multiply throughput if the channel is rich enough to give them independent pipes. That\u2019s why MIMO loves multipath \u2014 reflections that ruin a simple link create the diversity MIMO feeds on." },
+          { t: "Term", c: C.A, x: "SVD: any channel factors as H = UΣVᴴ. With the right precoding (V) and combining (U), MIMO turns into min(Nt,Nr) independent scalar channels whose gains are the singular values σᵢ." },
+          { t: "Intuition", c: C.Q, x: "Picture parallel pipes of different widths. How many carry useful data = the channel’s rank. Rich scattering opens several fat pipes (many streams); pure line-of-sight leaves one (just one stream)." },
+          { t: "Heads up", c: C.warn, x: "More antennas only multiply throughput if the channel is rich enough to give them independent pipes. That’s why MIMO loves multipath — reflections that ruin a simple link create the diversity MIMO feeds on." },
         ]}
         n="11" title="MIMO is several parallel pipes in disguise"
         body="The deepest view: the SVD diagonalizes the channel into independent sub-channels — parallel pipes, each with its own gain σ. The number of strong pipes is how many spatial streams you can actually run. Water-filling then pours transmit power preferentially into the better pipes. Drag the channel from line-of-sight toward rich scattering and watch the pipes equalize and capacity climb." />
@@ -591,17 +591,17 @@ function PipesModule() {
         </div>
       </div>
       <Deeper
-        recap="The SVD factors H = U\u03a3V\u1d34. Transmit along the V directions and combine along the U directions, and the channel becomes \u03a3 \u2014 a diagonal of independent gains \u03c3\u2081 \u2265 \u03c3\u2082 \u2265 \u2026 Each \u03c3\u1d62 is one private pipe whose rate grows with \u03c3\u1d62\u00b2. The count of non-tiny singular values is how many spatial streams the air will actually carry; water-filling then pours power preferentially into the strongest pipes."
-        example={`A 2\u00d72 channel, total power fixed (\u03c3\u2081\u00b2+\u03c3\u2082\u00b2 = 2), SNR 15 dB:
+        recap="The SVD factors H = UΣVᴴ. Transmit along the V directions and combine along the U directions, and the channel becomes Σ — a diagonal of independent gains σ₁ ≥ σ₂ ≥ … Each σᵢ is one private pipe whose rate grows with σᵢ². The count of non-tiny singular values is how many spatial streams the air will actually carry; water-filling then pours power preferentially into the strongest pipes."
+        example={`A 2×2 channel, total power fixed (σ₁²+σ₂² = 2), SNR 15 dB:
 
-  Rich scattering   \u03c3 = [1.00, 1.00]  \u2192  two equal pipes
-                    capacity \u2248 8.1 bit/s/Hz
-  Line-of-sight     \u03c3 = [1.41, 0.00]  \u2192  one pipe, one dead
-                    capacity \u2248 6.0 bit/s/Hz
+  Rich scattering   σ = [1.00, 1.00]  →  two equal pipes
+                    capacity ≈ 8.1 bit/s/Hz
+  Line-of-sight     σ = [1.41, 0.00]  →  one pipe, one dead
+                    capacity ≈ 6.0 bit/s/Hz
 
-Same antennas, same total power \u2014 the rich channel carries
+Same antennas, same total power — the rich channel carries
 ~35% more because it offers a second usable pipe. Water-filling
-won't even feed the dead pipe: its noise floor N\u2080/\u03c3\u00b2 sits above
+won't even feed the dead pipe: its noise floor N₀/σ² sits above
 the waterline, so it receives zero power.`}
       />
     </div>
@@ -657,7 +657,7 @@ function BeamModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "Beamforming: pick the phase (and amplitude) on each antenna so their signals add up toward one direction. A linear phase ramp across the array steers the main lobe to any angle." },
-          { t: "Intuition", c: C.Q, x: "Multiplexing reads many streams at once; beamforming instead concentrates energy spatially \u2014 a flashlight you aim with arithmetic. The same trick can place a deep null on an interferer." },
+          { t: "Intuition", c: C.Q, x: "Multiplexing reads many streams at once; beamforming instead concentrates energy spatially — a flashlight you aim with arithmetic. The same trick can place a deep null on an interferer." },
           { t: "Heads up", c: C.warn, x: "Spacing matters: beyond half a wavelength, copies of the main lobe appear (grating lobes). Tapering the amplitudes lowers the sidelobes at the cost of a wider main beam." },
         ]}
         n="12" title="Beamforming — aim the array, null the interference"
@@ -700,20 +700,20 @@ function BeamModule() {
       </div>
       <Deeper
         recap="Each element applies a phase to the signal. Pick phases that line up toward one direction and the contributions add to N (full array gain); toward other angles they partly cancel. A linear phase ramp across the array steers the main lobe. To erase an interferer, choose weights orthogonal to its direction vector, forcing its contributions to cancel exactly."
-        example={`A 4-element array, spacing d = 0.5\u03bb.
+        example={`A 4-element array, spacing d = 0.5λ.
 
-Steer to 0\u00b0 \u2192 every element gets phase 0:
-  toward 0\u00b0:  1 + 1 + 1 + 1  = 4   \u2192 +6 dB  (10\u00b7log\u2081\u2080 4)
+Steer to 0° → every element gets phase 0:
+  toward 0°:  1 + 1 + 1 + 1  = 4   → +6 dB  (10·log₁₀ 4)
 
-Now look toward 30\u00b0 with that same steering:
-  phase step = 2\u03c0\u00b70.5\u00b7sin 30\u00b0 = 90\u00b0 per element
-  contributions: 1, j, \u22121, \u2212j      = 0   \u2192 a natural null
+Now look toward 30° with that same steering:
+  phase step = 2π·0.5·sin 30° = 90° per element
+  contributions: 1, j, −1, −j      = 0   → a natural null
 
 One set of weights is +6 dB one way and zero another, purely
 from how the phases stack. Turning on nulling re-picks the
 weights orthogonal to the interferer, driving its four
-contributions to cancel \u2014 the deep notch you see. (Push spacing
-past 0.5\u03bb and a second angle also aligns every phase: a grating
+contributions to cancel — the deep notch you see. (Push spacing
+past 0.5λ and a second angle also aligns every phase: a grating
 lobe, an unwanted copy of your beam.)`}
       />
     </div>
@@ -765,8 +765,8 @@ function DiversityModule() {
       ctx.strokeStyle = C.edge; ctx.beginPath(); ctx.moveTo(cx0 - R, cy0); ctx.lineTo(cx0 + R, cy0); ctx.moveTo(cx0, cy0 - R); ctx.lineTo(cx0, cy0 + R); ctx.stroke();
       arrow(ctx, cx0, cy0, cx0 + h1.re * R, cy0 - h1.im * R, C.I, 2.5);
       if (mode === "alamouti") arrow(ctx, cx0, cy0, cx0 + h2.re * R, cy0 - h2.im * R, C.Q, 2.5);
-      ctx.font = `10px ${FONT.mono}`; ctx.fillStyle = C.I; ctx.textAlign = "left"; ctx.fillText("h\u2081 path", 6, 14);
-      if (mode === "alamouti") { ctx.fillStyle = C.Q; ctx.fillText("h\u2082 path", 6, 28); }
+      ctx.font = `10px ${FONT.mono}`; ctx.fillStyle = C.I; ctx.textAlign = "left"; ctx.fillText("h₁ path", 6, 14);
+      if (mode === "alamouti") { ctx.fillStyle = C.Q; ctx.fillText("h₂ path", 6, 28); }
     }
     const cc = conRef.current;
     if (cc) { const ctx = cc._ctx || (cc._ctx = fitCanvas(cc, cc.clientWidth, cc.clientHeight)); constellation(ctx, cc.clientWidth, cc.clientHeight, [{ pts, color: mode === "single" ? C.warn : C.D, size: 2, alpha: 0.7 }], 2.8, { ref: true }); }
@@ -777,9 +777,9 @@ function DiversityModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "Diversity vs multiplexing \u2014 the two ways to spend antennas. Multiplexing (modules 10\u201311) sends different data per antenna for more rate. Diversity sends the same data over independent paths for more reliability." },
+          { t: "Term", c: C.A, x: "Diversity vs multiplexing — the two ways to spend antennas. Multiplexing (modules 10–11) sends different data per antenna for more rate. Diversity sends the same data over independent paths for more reliability." },
           { t: "Intuition", c: C.Q, x: "Alamouti coding spreads two symbols across two antennas and two time slots so a single receiver still gets a fade-protected copy. You only lose a symbol if BOTH paths fade at the same instant." },
-          { t: "Heads up", c: C.warn, x: "Diversity buys robustness, not throughput \u2014 Alamouti\u2019s rate is still one symbol per channel use. Real radios watch the channel and switch between diversity and multiplexing (rank adaptation)." },
+          { t: "Heads up", c: C.warn, x: "Diversity buys robustness, not throughput — Alamouti’s rate is still one symbol per channel use. Real radios watch the channel and switch between diversity and multiplexing (rank adaptation)." },
         ]}
         n="13" title="Diversity: trade throughput for reliability"
         body="Multiplexing was about cramming more streams through a good channel. The other use of multiple antennas is the opposite bet: send one stream redundantly across independent paths so a deep fade on any one path can't kill it. Drive antenna 1 into a fade and compare a single antenna (the symbol dies) against Alamouti diversity (antenna 2 carries it through)." />
@@ -794,7 +794,7 @@ function DiversityModule() {
               </div>
             </div>
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: "10px 0 0", lineHeight: 1.5 }}>
-              Tight on the crosses = symbols recovered. Fade antenna 1 (h\u2081 \u2192 0): in single-antenna mode the cloud detonates; in Alamouti it barely flinches.
+              Tight on the crosses = symbols recovered. Fade antenna 1 (h₁ → 0): in single-antenna mode the cloud detonates; in Alamouti it barely flinches.
             </p>
           </Panel>
         </div>
@@ -802,8 +802,8 @@ function DiversityModule() {
           <Panel label="Scheme">
             <div style={{ display: "grid", gap: 16 }}>
               <div><div style={{ fontSize: 13, color: C.sub, fontFamily: FONT.body, marginBottom: 6 }}>Transmission</div><Pills value={mode} options={["single", "alamouti"]} onChange={setMode} /></div>
-              <Slider label="Antenna-1 path strength |h\u2081|" value={g1} min={0.02} max={1} step={0.01} color={C.I} fmt={(v) => v.toFixed(2)} onChange={setG1} />
-              <Slider label={"Antenna-2 path strength |h\u2082|" + (mode === "single" ? " (unused)" : "")} value={g2} min={0.02} max={1} step={0.01} color={C.Q} fmt={(v) => v.toFixed(2)} onChange={setG2} />
+              <Slider label="Antenna-1 path strength |h₁|" value={g1} min={0.02} max={1} step={0.01} color={C.I} fmt={(v) => v.toFixed(2)} onChange={setG1} />
+              <Slider label={"Antenna-2 path strength |h₂|" + (mode === "single" ? " (unused)" : "")} value={g2} min={0.02} max={1} step={0.01} color={C.Q} fmt={(v) => v.toFixed(2)} onChange={setG2} />
               <Slider label="Signal-to-noise ratio" value={snr} min={0} max={30} step={1} color={C.sub} fmt={(v) => v.toFixed(0) + " dB"} onChange={setSnr} />
             </div>
           </Panel>
@@ -815,28 +815,28 @@ function DiversityModule() {
               ["data rate", "1 symbol / use", C.faint],
             ]} />
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: "12px 0 0", lineHeight: 1.55 }}>
-              Single antenna rides on |h\u2081|\u00b2 alone. Alamouti rides on |h\u2081|\u00b2+|h\u2082|\u00b2 \u2014 the sum, so one fade no longer means an outage.
+              Single antenna rides on |h₁|² alone. Alamouti rides on |h₁|²+|h₂|² — the sum, so one fade no longer means an outage.
             </p>
           </Panel>
         </div>
       </div>
       <Deeper
-        recap="Alamouti's 2\u00d71 scheme sends s\u2081,s\u2082 in slot 1 and \u2212s\u2082*,s\u2081* in slot 2 across the two antennas. A single receiver collects r\u2081,r\u2082, and a simple combiner untangles them \u2014 the cross-terms cancel algebraically, leaving each symbol scaled by the summed path power |h\u2081|\u00b2+|h\u2082|\u00b2. That sum is the whole point: it stays large unless both paths fade together, which is the definition of full (order-2) diversity."
+        recap="Alamouti's 2×1 scheme sends s₁,s₂ in slot 1 and −s₂*,s₁* in slot 2 across the two antennas. A single receiver collects r₁,r₂, and a simple combiner untangles them — the cross-terms cancel algebraically, leaving each symbol scaled by the summed path power |h₁|²+|h₂|². That sum is the whole point: it stays large unless both paths fade together, which is the definition of full (order-2) diversity."
         example={`Transmit:        slot 1     slot 2
-   antenna 1:      s\u2081        \u2212s\u2082*
-   antenna 2:      s\u2082         s\u2081*
+   antenna 1:      s₁        −s₂*
+   antenna 2:      s₂         s₁*
 
-Receive (one antenna, channels h\u2081,h\u2082):
-   r\u2081 = h\u2081s\u2081 + h\u2082s\u2082
-   r\u2082 = \u2212h\u2081s\u2082* + h\u2082s\u2081*
+Receive (one antenna, channels h₁,h₂):
+   r₁ = h₁s₁ + h₂s₂
+   r₂ = −h₁s₂* + h₂s₁*
 
 Combine:
-   \u015d\u2081 = h\u2081*r\u2081 + h\u2082r\u2082*  =  (|h\u2081|\u00b2+|h\u2082|\u00b2)\u00b7s\u2081
-   \u015d\u2082 = h\u2082*r\u2081 \u2212 h\u2081r\u2082*  =  (|h\u2081|\u00b2+|h\u2082|\u00b2)\u00b7s\u2082
+   ŝ₁ = h₁*r₁ + h₂r₂*  =  (|h₁|²+|h₂|²)·s₁
+   ŝ₂ = h₂*r₁ − h₁r₂*  =  (|h₁|²+|h₂|²)·s₂
 
-If |h\u2081| fades to 0, the symbol still arrives at |h\u2082|\u00b2 \u2014 you
-lose it only if h\u2081 AND h\u2082 fade at once. A single antenna has
-just |h\u2081|\u00b2, so one fade is an outage.`}
+If |h₁| fades to 0, the symbol still arrives at |h₂|² — you
+lose it only if h₁ AND h₂ fade at once. A single antenna has
+just |h₁|², so one fade is an outage.`}
       />
     </div>
   );
@@ -895,8 +895,8 @@ function MUMIMOModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "Multi-user MIMO (SDMA): one base station with many antennas serves several single-antenna users at once on the same time and frequency, each in its own spatial beam." },
-          { t: "Intuition", c: C.Q, x: "Zero-forcing precoding builds one beam per user that points at that user and nulls every other \u2014 the transmit-side twin of module 10\u2019s receiver. Each phone hears only its own stream." },
-          { t: "Heads up", c: C.warn, x: "It needs at least as many antennas as users (N \u2265 K) and users at distinguishable angles. Drag two users together and the precoder strains, then collapses \u2014 the same signature problem from module 10." },
+          { t: "Intuition", c: C.Q, x: "Zero-forcing precoding builds one beam per user that points at that user and nulls every other — the transmit-side twin of module 10’s receiver. Each phone hears only its own stream." },
+          { t: "Heads up", c: C.warn, x: "It needs at least as many antennas as users (N ≥ K) and users at distinguishable angles. Drag two users together and the precoder strains, then collapses — the same signature problem from module 10." },
         ]}
         n="14" title="Multi-user MIMO: one tower, many phones, one channel"
         body="Spatial multiplexing doesn't have to feed one device — a base station can aim a separate beam at each of several users simultaneously, reusing the exact same frequency. Zero-forcing precoding shapes each beam to peak on its own user and null all the others. This spatial division is what lets massive-MIMO 5G cells multiply capacity with antenna count." />
@@ -931,10 +931,10 @@ function MUMIMOModule() {
         </div>
       </div>
       <Deeper
-        recap="Stack each user's channel as a row of H (K\u00d7N). The zero-forcing precoder W = H\u1d34(HH\u1d34)\u207b\u00b9 satisfies HW = I, so user k receives its own symbol and a clean zero from every other user's beam. It's module 10's receiver inverse, moved to the transmitter: instead of un-mixing after the fact, the tower pre-mixes so the channel delivers each stream cleanly."
-        example={`Base station N = 6 antennas, users at \u221230\u00b0, 10\u00b0, 40\u00b0.
-Build H (3\u00d76), rows = steering vectors a(\u03b8\u2096).
-Precoder  W = H\u1d34(HH\u1d34)\u207b\u00b9  (6\u00d73).
+        recap="Stack each user's channel as a row of H (K×N). The zero-forcing precoder W = Hᴴ(HHᴴ)⁻¹ satisfies HW = I, so user k receives its own symbol and a clean zero from every other user's beam. It's module 10's receiver inverse, moved to the transmitter: instead of un-mixing after the fact, the tower pre-mixes so the channel delivers each stream cleanly."
+        example={`Base station N = 6 antennas, users at −30°, 10°, 40°.
+Build H (3×6), rows = steering vectors a(θₖ).
+Precoder  W = Hᴴ(HHᴴ)⁻¹  (6×3).
 
 Check what each user receives (HW):
    user 1:  [ 1   0   0 ]
@@ -942,8 +942,8 @@ Check what each user receives (HW):
    user 3:  [ 0   0   1 ]
 
 Each beam is exactly 1 toward its own user and 0 toward the
-other two \u2014 three private links over one frequency. Move two
-users to the same angle and HH\u1d34 becomes singular: the inverse
+other two — three private links over one frequency. Move two
+users to the same angle and HHᴴ becomes singular: the inverse
 explodes and the beams collapse, just like two streams sharing
 one spatial signature.`}
       />
@@ -983,26 +983,26 @@ function SingleRxModule() {
       ctx.strokeStyle = C.edge; ctx.beginPath(); ctx.moveTo(x0 - R, y0); ctx.lineTo(x0 + R, y0); ctx.moveTo(x0, y0 - R); ctx.lineTo(x0, y0 + R); ctx.stroke();
       arrow(ctx, x0, y0, x0 + h1.re * R, y0 - h1.im * R, C.A, 2.5);
       arrow(ctx, x0, y0, x0 + h2.re * R, y0 - h2.im * R, C.B, 2.5);
-      ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillStyle = C.A; ctx.fillText("h\u2081 · stream A", 6, 14); ctx.fillStyle = C.B; ctx.fillText("h\u2082 · stream B", 6, 28);
+      ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillStyle = C.A; ctx.fillText("h₁ · stream A", 6, 14); ctx.fillStyle = C.B; ctx.fillText("h₂ · stream B", 6, 28);
     }
   }, [ratio, phase, snr]);
 
   const status = info.dmin < 0.06 ? ["ambiguous — symbols collide", C.warn] : info.sep > 2 ? ["recoverable", C.D] : info.sep > 1 ? ["marginal", C.I] : ["lost in noise", C.warn];
   const penalty = info.dmin > 0.001 ? (20 * Math.log10(1.414 / info.dmin)).toFixed(1) + " dB" : "∞";
   const techniques = [
-    ["Joint detection (SAIC)", C.A, "Treat the two signals\u2019 sum as one big alphabet and pick the likeliest pair. Needs known modulation and channel; pays a steep SNR cost. (This is the view above — deployed in GSM phones.)"],
+    ["Joint detection (SAIC)", C.A, "Treat the two signals’ sum as one big alphabet and pick the likeliest pair. Needs known modulation and channel; pays a steep SNR cost. (This is the view above — deployed in GSM phones.)"],
     ["Channel variation over time", C.Q, "Hold the symbols while the channel drifts; the time-snapshots act as extra antennas and give you the missing equations. Costs data rate, needs Doppler."],
-    ["Oversampling a multipath channel", C.D, "Sampling faster than the symbol rate on a delay-spread channel yields several \u2018virtual\u2019 outputs from one antenna, enough for blind equalization."],
-    ["Blind structure (CMA, cyclostationarity)", C.I, "Channel unknown? Exploit PSK\u2019s constant modulus, or two signals\u2019 different baud rates / carrier offsets, to lock onto and peel off one at a time."],
-    ["Sparsity / compressed sensing", C.B, "If only a few of many possible streams are active at once, a single antenna can recover them by exploiting that sparsity \u2014 grant-free massive access."],
+    ["Oversampling a multipath channel", C.D, "Sampling faster than the symbol rate on a delay-spread channel yields several ‘virtual’ outputs from one antenna, enough for blind equalization."],
+    ["Blind structure (CMA, cyclostationarity)", C.I, "Channel unknown? Exploit PSK’s constant modulus, or two signals’ different baud rates / carrier offsets, to lock onto and peel off one at a time."],
+    ["Sparsity / compressed sensing", C.B, "If only a few of many possible streams are active at once, a single antenna can recover them by exploiting that sparsity — grant-free massive access."],
   ];
   return (
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "Single-antenna interference cancellation (SAIC): with one antenna you can\u2019t null spatially, so instead you detect the most likely pair of symbols jointly from their combined alphabet. Real \u2014 it\u2019s in GSM." },
-          { t: "Intuition", c: C.Q, x: "Two QPSK streams add into a 16-point \u2018superposition constellation\u2019. If those points stay distinct, one complex sample pins down both symbols \u2014 you demultiplex by reading which of 16 dots you landed nearest." },
-          { t: "Heads up", c: C.warn, x: "You\u2019re now separating 16 packed dots instead of 4, so minimum distance shrinks and the SNR cost is steep. And if the two channels look alike the dots collide \u2014 swapping the streams yields the same sample, so it\u2019s hopeless." },
+          { t: "Term", c: C.A, x: "Single-antenna interference cancellation (SAIC): with one antenna you can’t null spatially, so instead you detect the most likely pair of symbols jointly from their combined alphabet. Real — it’s in GSM." },
+          { t: "Intuition", c: C.Q, x: "Two QPSK streams add into a 16-point ‘superposition constellation’. If those points stay distinct, one complex sample pins down both symbols — you demultiplex by reading which of 16 dots you landed nearest." },
+          { t: "Heads up", c: C.warn, x: "You’re now separating 16 packed dots instead of 4, so minimum distance shrinks and the SNR cost is steep. And if the two channels look alike the dots collide — swapping the streams yields the same sample, so it’s hopeless." },
         ]}
         n="15" title="One antenna, many streams — what's actually possible"
         body="A lone receiver gets one complex number per channel use — fewer measurements than unknowns, so it cannot separate co-channel streams by linear algebra the way modules 10–14 do. The escape is structure. Because the symbols come from a known finite alphabet, the streams add into a fixed set of points, and joint detection picks the most likely combination. It works when those points stay far apart at high SNR, and fails when the channels are too similar — plus a handful of other tricks that trade time, bandwidth, or assumptions for the missing antenna." />
@@ -1014,7 +1014,7 @@ function SingleRxModule() {
               <div style={{ textAlign: "center" }}><canvas ref={chRef} style={{ width: 120, height: 120, display: "block" }} /><div style={{ fontFamily: FONT.mono, fontSize: 10, color: C.faint, marginTop: 5 }}>two channels</div></div>
             </div>
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: "10px 0 0", lineHeight: 1.5 }}>
-              Colour = stream A\u2019s symbol; white dots are the 16 ideal sums. When the four colours form separable clusters, both streams are readable from this single antenna. Make the channels alike, or drop SNR, and the colours bleed together.
+              Colour = stream A’s symbol; white dots are the 16 ideal sums. When the four colours form separable clusters, both streams are readable from this single antenna. Make the channels alike, or drop SNR, and the colours bleed together.
             </p>
           </Panel>
           <Panel label="Techniques for a single antenna">
@@ -1029,12 +1029,12 @@ function SingleRxModule() {
         <div style={{ display: "grid", gap: 14, alignContent: "start" }}>
           <Panel label="Channel & noise">
             <div style={{ display: "grid", gap: 16 }}>
-              <Slider label="Second channel strength |h\u2082|/|h\u2081|" value={ratio} min={0.1} max={1} step={0.01} color={C.B} fmt={(v) => v.toFixed(2)} onChange={setRatio} />
+              <Slider label="Second channel strength |h₂|/|h₁|" value={ratio} min={0.1} max={1} step={0.01} color={C.B} fmt={(v) => v.toFixed(2)} onChange={setRatio} />
               <Slider label="Phase between the two channels" value={phase} min={0} max={180} step={1} color={C.Q} fmt={(v) => v.toFixed(0) + "°"} onChange={setPhase} />
               <Slider label="Signal-to-noise ratio" value={snr} min={5} max={35} step={1} color={C.I} fmt={(v) => v.toFixed(0) + " dB"} onChange={setSnr} />
             </div>
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: "14px 0 0", lineHeight: 1.55 }}>
-              Bring the phase toward 0° with |h\u2082|\u2248|h\u2081| to make the two channels nearly identical — watch the constellation collapse and the streams become unrecoverable at any SNR.
+              Bring the phase toward 0° with |h₂|≈|h₁| to make the two channels nearly identical — watch the constellation collapse and the streams become unrecoverable at any SNR.
             </p>
           </Panel>
           <Panel label="Can you read it?">
@@ -1045,33 +1045,33 @@ function SingleRxModule() {
               ["verdict", status[0], status[1]],
             ]} />
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: "12px 0 0", lineHeight: 1.55 }}>
-              The whole game is that minimum distance. The channel sets it, the receiver can\u2019t change it, and when it hits zero no amount of power or processing recovers the streams.
+              The whole game is that minimum distance. The channel sets it, the receiver can’t change it, and when it hits zero no amount of power or processing recovers the streams.
             </p>
           </Panel>
         </div>
       </div>
       <Deeper
-        recap="One antenna gives one equation per symbol period, and two streams are two unknowns — underdetermined. Joint maximum-likelihood detection sidesteps the missing equation by using the alphabet: it precomputes the 16 possible sums h\u2081s\u2081+h\u2082s\u2082 and picks the pair whose sum sits closest to the received sample. Recovery hinges entirely on the minimum distance between those 16 points, which the channel sets — and which collapses to zero when one stream is just a relabelling of the other."
-        example={`Two QPSK streams, h\u2081 = 1.
+        recap="One antenna gives one equation per symbol period, and two streams are two unknowns — underdetermined. Joint maximum-likelihood detection sidesteps the missing equation by using the alphabet: it precomputes the 16 possible sums h₁s₁+h₂s₂ and picks the pair whose sum sits closest to the received sample. Recovery hinges entirely on the minimum distance between those 16 points, which the channel sets — and which collapses to zero when one stream is just a relabelling of the other."
+        example={`Two QPSK streams, h₁ = 1.
 
-Favourable channel  h\u2082 = 0.8 \u2220110\u00b0:
+Favourable channel  h₂ = 0.8 ∠110°:
    all 16 sums distinct, min distance 0.52.
    vs single-stream QPSK (min distance 1.41) that's a
-   ~8.6 dB SNR penalty \u2014 workable at high SNR.
+   ~8.6 dB SNR penalty — workable at high SNR.
 
-Bad channel  h\u2082 = h\u2081:
-   y = h\u2081(s\u2081+s\u2082), so (s\u2081,s\u2082) and (s\u2082,s\u2081) produce the SAME
-   sample. min distance 0.00 \u2014 the streams are swappable,
+Bad channel  h₂ = h₁:
+   y = h₁(s₁+s₂), so (s₁,s₂) and (s₂,s₁) produce the SAME
+   sample. min distance 0.00 — the streams are swappable,
    unrecoverable at any SNR.
 
-\u2014\u2014 turning TIME into the missing dimension \u2014\u2014
+—— turning TIME into the missing dimension ——
 Hold the symbols fixed for two periods while the channel
 moves (Doppler):
-   slot 1:  y\u2081 = h\u2081(t\u2081)\u00b7s\u2081 + h\u2082(t\u2081)\u00b7s\u2082
-   slot 2:  y\u2082 = h\u2081(t\u2082)\u00b7s\u2081 + h\u2082(t\u2082)\u00b7s\u2082
+   slot 1:  y₁ = h₁(t₁)·s₁ + h₂(t₁)·s₂
+   slot 2:  y₂ = h₁(t₂)·s₁ + h₂(t₂)·s₂
 If the channel changed, those are two independent equations
-\u2192 solve exactly like module 10. If it sat still, both rows
-match \u2192 rank 1 \u2192 no solution. You bought the second equation
+→ solve exactly like module 10. If it sat still, both rows
+match → rank 1 → no solution. You bought the second equation
 with time, at half the data rate.`}
       />
     </div>
@@ -1129,8 +1129,8 @@ function OFDMModule() {
       ctx.lineTo(w, h - padB); ctx.closePath(); ctx.fillStyle = "rgba(232,184,92,0.18)"; ctx.fill();
       ctx.strokeStyle = C.I; ctx.lineWidth = 1.8; ctx.beginPath(); for (let k = 0; k < N; k++) { const x = xOf(k), y = yOf(sig[k][0]); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
       if (Nss >= 2) { ctx.strokeStyle = C.Q; ctx.lineWidth = 1.5; ctx.beginPath(); for (let k = 0; k < N; k++) { const x = xOf(k), y = yOf(sig[k][1]); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); }
-      ctx.fillStyle = C.faint; ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("subcarrier (frequency) \u2192", 4, h - 7);
-      ctx.fillStyle = C.I; ctx.textAlign = "right"; ctx.fillText("\u03c3\u2081", w - 6, padT + 10); if (Nss >= 2) { ctx.fillStyle = C.Q; ctx.fillText("\u03c3\u2082", w - 6, padT + 22); }
+      ctx.fillStyle = C.faint; ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("subcarrier (frequency) →", 4, h - 7);
+      ctx.fillStyle = C.I; ctx.textAlign = "right"; ctx.fillText("σ₁", w - 6, padT + 10); if (Nss >= 2) { ctx.fillStyle = C.Q; ctx.fillText("σ₂", w - 6, padT + 22); }
     }
     // resource grid: streams (rows) x subcarriers (cols)
     const cg = gRef.current;
@@ -1146,7 +1146,7 @@ function OFDMModule() {
       }
       ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "right"; ctx.textBaseline = "middle";
       for (let i = 0; i < Nss; i++) ctx.fillText("L" + (i + 1), padL - 4, i * chh + chh / 2);
-      ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("frequency \u2192", padL, h - 5);
+      ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("frequency →", padL, h - 5);
       ctx.save(); ctx.translate(8, gh / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center"; ctx.fillText("layers", 0, 0); ctx.restore();
     }
   }, [N, Nss, L, snr]);
@@ -1157,8 +1157,8 @@ function OFDMModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "OFDM: an IFFT/FFT pair turns one wideband signal into many narrowband subcarriers, each just multiplied by a single gain H[k]. A cyclic prefix soaks up the channel\u2019s echo so the subcarriers stay orthogonal. Subcarriers \u00d7 OFDM symbols = the resource grid." },
-          { t: "Intuition", c: C.Q, x: "Part 2 split the band to separate signals; OFDM splits it to make transmitting easy \u2014 every subcarrier becomes a flat channel you already know how to handle. Then Part 3\u2019s spatial multiplexing runs on each subcarrier independently." },
+          { t: "Term", c: C.A, x: "OFDM: an IFFT/FFT pair turns one wideband signal into many narrowband subcarriers, each just multiplied by a single gain H[k]. A cyclic prefix soaks up the channel’s echo so the subcarriers stay orthogonal. Subcarriers × OFDM symbols = the resource grid." },
+          { t: "Intuition", c: C.Q, x: "Part 2 split the band to separate signals; OFDM splits it to make transmitting easy — every subcarrier becomes a flat channel you already know how to handle. Then Part 3’s spatial multiplexing runs on each subcarrier independently." },
           { t: "Heads up", c: C.warn, x: "Frequency-selective fades wipe out whole subcarriers; real radios pour more bits where the channel is strong and protect or skip the notches. Pilots and the cyclic prefix cost overhead the headline rate ignores." },
         ]}
         n="16" title="Capstone — OFDM × MIMO: frequency meets space"
@@ -1201,21 +1201,21 @@ function OFDMModule() {
         </div>
       </div>
       <Deeper
-        recap="OFDM sends data on N orthogonal subcarriers; with a cyclic prefix the frequency-selective channel acts on each subcarrier as a single multiply H[k] = \u03a3\u2097 h[l]\u00b7e^{\u2212j2\u03c0kl/N} \u2014 the DFT of the channel\u2019s tap delays. That turns nasty wideband equalization into N trivial per-subcarrier divisions. Put MIMO on top and each subcarrier carries its own H[k] matrix with its own singular values, so the air becomes (subcarriers \u00d7 spatial layers) parallel channels and the total rate is the sum over the whole grid."
+        recap="OFDM sends data on N orthogonal subcarriers; with a cyclic prefix the frequency-selective channel acts on each subcarrier as a single multiply H[k] = Σₗ h[l]·e^{−j2πkl/N} — the DFT of the channel’s tap delays. That turns nasty wideband equalization into N trivial per-subcarrier divisions. Put MIMO on top and each subcarrier carries its own H[k] matrix with its own singular values, so the air becomes (subcarriers × spatial layers) parallel channels and the total rate is the sum over the whole grid."
         example={`Per-subcarrier flat-channel identity:
-   H[k] = \u03a3\u2097 h[l]\u00b7e^{\u2212j2\u03c0kl/N}
-   1 tap  (L=1) \u2192 H[k] constant \u2192 flat channel, no notches.
+   H[k] = Σₗ h[l]·e^{−j2πkl/N}
+   1 tap  (L=1) → H[k] constant → flat channel, no notches.
    each extra tap adds a ripple, carving the fades you see.
 
-Putting it together \u2014 64-subcarrier OFDM, 2\u00d72 MIMO, 20 MHz,
+Putting it together — 64-subcarrier OFDM, 2×2 MIMO, 20 MHz,
 ~25 dB SNR:
-   ~56 useful subcarriers \u00d7 2 layers = 112 parallel channels
-   \u2248 15 bit/s/Hz averaged over subcarriers
-   \u2248 300 Mbit/s raw (before coding & cyclic-prefix overhead)
+   ~56 useful subcarriers × 2 layers = 112 parallel channels
+   ≈ 15 bit/s/Hz averaged over subcarriers
+   ≈ 300 Mbit/s raw (before coding & cyclic-prefix overhead)
 
-Real systems go further: 80\u2013160 MHz bands, 4\u20138 layers, and
-256-QAM, multiplying these same two axes \u2014 frequency and space
-\u2014 all the way to multi-gigabit.`}
+Real systems go further: 80–160 MHz bands, 4–8 layers, and
+256-QAM, multiplying these same two axes — frequency and space
+— all the way to multi-gigabit.`}
       />
     </div>
   );
@@ -1246,7 +1246,7 @@ function Predict({ q, options, answer, why }) {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
       </div>
-      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" — "}{why}</div>}
     </div>
   );
 }
@@ -1294,7 +1294,7 @@ export default function App() {
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
             {MODULES.map((m, i) => (
               <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}>
-                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span>
+                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"•"}</span>)}</span>
               </button>
             ))}
           </nav>

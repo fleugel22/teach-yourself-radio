@@ -69,7 +69,7 @@ function Deeper({ recap, example }) {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ marginTop: 18 }}>
-      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>{open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}</button>
+      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>{open ? "▾  hide the deeper dive" : "▸  go deeper — recap & a worked example"}</button>
       {open && <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
         <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.Q, marginBottom: 6 }}>So what just happened</div>
         <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.sub, lineHeight: 1.62, margin: "0 0 16px" }}>{recap}</p>
@@ -107,7 +107,7 @@ function SamplingModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "The sampling (Nyquist) theorem: to capture a signal without ambiguity, sample faster than twice its highest frequency. That threshold, Fs/2, is the Nyquist frequency." },
-          { t: "Intuition", c: C.Q, x: "Too few samples per cycle and a fast sine is indistinguishable from a slow one passing through the same dots \u2014 that ghost is an alias. It\u2019s the same folding you met as the spectrum window in Part 1." },
+          { t: "Intuition", c: C.Q, x: "Too few samples per cycle and a fast sine is indistinguishable from a slow one passing through the same dots — that ghost is an alias. It’s the same folding you met as the spectrum window in Part 1." },
           { t: "Try it", c: C.D, x: "Push the signal frequency past Fs/2 and a red alias appears: a lower-frequency wave that fits every sample. Raise the sample rate to push the Nyquist limit out and banish it." },
         ]}
         n="0.1" title="The sampling theorem"
@@ -117,7 +117,7 @@ function SamplingModule() {
           <Panel label="A sine, its samples, and (if undersampled) its alias">
             <canvas ref={ref} style={{ width: "100%", height: 220, display: "block" }} />
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: "10px 0 0", lineHeight: 1.5 }}>
-              Grey is the true signal, amber dots are the samples kept. Below Nyquist they pin the signal uniquely; above it, the red alias fits the same dots — the receiver can\u2019t tell which was sent.
+              Grey is the true signal, amber dots are the samples kept. Below Nyquist they pin the signal uniquely; above it, the red alias fits the same dots — the receiver can’t tell which was sent.
             </p>
           </Panel>
         </div>
@@ -131,23 +131,23 @@ function SamplingModule() {
           <Panel label="Status">
             <Readout rows={[["Nyquist frequency Fs/2", (fs / 2).toFixed(1) + " Hz", C.ink], ["signal vs Nyquist", aliased ? "above — aliasing" : "below — safe", aliased ? C.warn : C.D], ["apparent (alias) frequency", (aliased ? fa : f).toFixed(1) + " Hz", aliased ? C.warn : C.D]]} />
             <div style={{ display: "flex", gap: 8, marginTop: 13, flexWrap: "wrap" }}>
-              <button className="iq-mini" onClick={() => tone(180 + f * 34)}>{"\u25b6"} true tone</button>
-              <button className="iq-mini" onClick={() => tone(180 + (aliased ? fa : f) * 34)} style={aliased ? { borderColor: C.warn, color: C.warn } : undefined}>{"\u25b6"} what the samples reconstruct</button>
+              <button className="iq-mini" onClick={() => tone(180 + f * 34)}>{"▶"} true tone</button>
+              <button className="iq-mini" onClick={() => tone(180 + (aliased ? fa : f) * 34)} style={aliased ? { borderColor: C.warn, color: C.warn } : undefined}>{"▶"} what the samples reconstruct</button>
             </div>
             <div style={{ fontFamily: FONT.body, fontSize: 11.5, color: C.faint, marginTop: 7, lineHeight: 1.5 }}>Below Nyquist the two sound identical; above it, the reconstructed tone is the lower-pitched alias.</div>
           </Panel>
         </div>
       </div>
       <Deeper
-        recap="A signal sampled at rate Fs is only unambiguous if all its energy sits below Fs/2. Beyond that, a component at frequency f is sampled identically to one at |f \u2212 k\u00b7Fs| \u2014 it folds back into the band as an alias and is unrecoverable. That\u2019s why real receivers put an anti-alias filter before the sampler, and why your capture\u2019s sample rate sets the bandwidth you can ever see (Part 1\u2019s \u00b1Fs/2 window)."
-        example={`Sample rate Fs = 16 Hz \u2192 Nyquist = 8 Hz.
-   signal at 3 Hz   \u2192 below 8, sampled faithfully (3 Hz)
-   signal at 14 Hz  \u2192 above 8: alias = |14 \u2212 16| = 2 Hz
+        recap="A signal sampled at rate Fs is only unambiguous if all its energy sits below Fs/2. Beyond that, a component at frequency f is sampled identically to one at |f − k·Fs| — it folds back into the band as an alias and is unrecoverable. That’s why real receivers put an anti-alias filter before the sampler, and why your capture’s sample rate sets the bandwidth you can ever see (Part 1’s ±Fs/2 window)."
+        example={`Sample rate Fs = 16 Hz → Nyquist = 8 Hz.
+   signal at 3 Hz   → below 8, sampled faithfully (3 Hz)
+   signal at 14 Hz  → above 8: alias = |14 − 16| = 2 Hz
         the 14 Hz wave and a 2 Hz wave share every sample.
-   signal at 19 Hz  \u2192 alias = |19 \u2212 16| = 3 Hz
+   signal at 19 Hz  → alias = |19 − 16| = 3 Hz
 
-General rule: apparent frequency = |f \u2212 round(f/Fs)\u00b7Fs|, always
-\u2264 Fs/2. Once aliased, no processing can separate the ghost
+General rule: apparent frequency = |f − round(f/Fs)·Fs|, always
+≤ Fs/2. Once aliased, no processing can separate the ghost
 from a real signal sitting at that frequency.`}
       />
     </div>
@@ -184,9 +184,9 @@ function QuantizationModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "An ADC rounds each sample to one of 2^b levels, where b is the bit depth. The rounding error is quantization noise \u2014 a noise floor you build into the signal the moment you digitize." },
-          { t: "Intuition", c: C.Q, x: "Each extra bit halves the step size, so it doubles the levels and cuts the rounding error in half \u2014 about 6 dB more dynamic range per bit. That\u2019s the whole story of bit depth." },
-          { t: "Heads up", c: C.warn, x: "Too few bits and quantization noise drowns weak signals; that\u2019s why wideband receivers watching strong and weak signals together need plenty of bits (and careful gain)." },
+          { t: "Term", c: C.A, x: "An ADC rounds each sample to one of 2^b levels, where b is the bit depth. The rounding error is quantization noise — a noise floor you build into the signal the moment you digitize." },
+          { t: "Intuition", c: C.Q, x: "Each extra bit halves the step size, so it doubles the levels and cuts the rounding error in half — about 6 dB more dynamic range per bit. That’s the whole story of bit depth." },
+          { t: "Heads up", c: C.warn, x: "Too few bits and quantization noise drowns weak signals; that’s why wideband receivers watching strong and weak signals together need plenty of bits (and careful gain)." },
         ]}
         n="0.2" title="Quantization and bit depth"
         body="Sampling fixes when you measure; quantization fixes how finely. An analog-to-digital converter snaps each sample to the nearest of 2^b levels, and the leftover rounding is noise you can never remove. The payoff is clean and famous: roughly six decibels of signal-to-noise per bit." />
@@ -212,16 +212,16 @@ function QuantizationModule() {
         </div>
       </div>
       <Deeper
-        recap="Rounding each sample to one of 2^b levels injects an error roughly uniform over one step \u0394. Its power is \u0394\u00b2/12, fixed by the step size, while a full-scale sine carries power A\u00b2/2. The ratio gives the quantization SNR, and because each added bit halves \u0394, the SNR climbs about 6.02 dB per bit \u2014 the dynamic range you bake in at the converter."
-        example={`Full-scale sine, range \u00b11, bit depth b \u2192 step \u0394 = 2 / 2^b.
+        recap="Rounding each sample to one of 2^b levels injects an error roughly uniform over one step Δ. Its power is Δ²/12, fixed by the step size, while a full-scale sine carries power A²/2. The ratio gives the quantization SNR, and because each added bit halves Δ, the SNR climbs about 6.02 dB per bit — the dynamic range you bake in at the converter."
+        example={`Full-scale sine, range ±1, bit depth b → step Δ = 2 / 2^b.
    signal power      = 1/2
-   quant-noise power = \u0394\u00b2/12
-   SNR = (1/2)/(\u0394\u00b2/12) \u2192 in dB: \u2248 6.02\u00b7b + 1.76
+   quant-noise power = Δ²/12
+   SNR = (1/2)/(Δ²/12) → in dB: ≈ 6.02·b + 1.76
 
-   8-bit  \u2192 \u2248 49.9 dB   (CD-quality is 16-bit \u2248 98 dB)
-   12-bit \u2192 \u2248 74.0 dB
+   8-bit  → ≈ 49.9 dB   (CD-quality is 16-bit ≈ 98 dB)
+   12-bit → ≈ 74.0 dB
 
-So a receiver\u2019s ADC bits set its noise floor before any signal
+So a receiver’s ADC bits set its noise floor before any signal
 processing. Spending bits buys the headroom to see a weak
 signal sitting next to a strong one.`}
       />
@@ -262,7 +262,7 @@ function BERModule() {
     ctx.strokeStyle = C.gridFaint; ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`;
     for (let dec = 0; dec >= -5; dec--) { const y = yOf(Math.pow(10, dec)); ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); ctx.textAlign = "right"; ctx.fillText("1e" + dec, x0 - 4, y + 3); }
     for (let e = 0; e <= EMAX; e += 2) { const x = xOf(e); ctx.strokeStyle = C.gridFaint; ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke(); ctx.textAlign = "center"; ctx.fillStyle = C.faint; ctx.fillText(e + "", x, y1 + 13); }
-    ctx.textAlign = "center"; ctx.fillText("Eb/N0 (dB) \u2192", (x0 + x1) / 2, h - 3);
+    ctx.textAlign = "center"; ctx.fillText("Eb/N0 (dB) →", (x0 + x1) / 2, h - 3);
     // cursor
     const xc = xOf(cursor); ctx.strokeStyle = C.edge; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(xc, y0); ctx.lineTo(xc, y1); ctx.stroke(); ctx.setLineDash([]);
     SCH.forEach(([s, col]) => {
@@ -277,8 +277,8 @@ function BERModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "SNR is signal power over noise power; for digital links the honest axis is Eb/N0, the energy per bit over the noise density. The bit error rate (BER) is the fraction of bits the receiver gets wrong." },
-          { t: "Intuition", c: C.Q, x: "More energy per bit pushes constellation points further above the noise, so BER falls \u2014 steeply. The curve is the single most important plot in digital comms: how clean a channel each scheme needs." },
-          { t: "Heads up", c: C.warn, x: "BPSK and QPSK need the same Eb/N0 (QPSK just sends two of them at once); 16QAM needs several dB more for the same BER \u2014 the price of its extra bits. Coding (Priority 5) buys some back." },
+          { t: "Intuition", c: C.Q, x: "More energy per bit pushes constellation points further above the noise, so BER falls — steeply. The curve is the single most important plot in digital comms: how clean a channel each scheme needs." },
+          { t: "Heads up", c: C.warn, x: "BPSK and QPSK need the same Eb/N0 (QPSK just sends two of them at once); 16QAM needs several dB more for the same BER — the price of its extra bits. Coding (Priority 5) buys some back." },
         ]}
         n="0.3" title="Noise, SNR, and the BER curve"
         body="Noise is what every later trick fights. Here we make it quantitative: drive each scheme through real additive-noise channels at a range of SNRs, count the bit errors, and plot bit error rate against energy-per-bit. The dots are live Monte-Carlo simulation; the smooth lines are the closed-form theory they should land on." />
@@ -301,23 +301,23 @@ function BERModule() {
           </Panel>
           <Panel label="Why it matters">
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: 0, lineHeight: 1.55 }}>
-              To hit BER 10⁻⁵, BPSK/QPSK need about 9.6 dB; 16QAM about 13.4 dB. Below ~ \u22121.6 dB (the Shannon limit) no scheme can be reliable at all \u2014 which is exactly the room error-correcting codes work in.
+              To hit BER 10⁻⁵, BPSK/QPSK need about 9.6 dB; 16QAM about 13.4 dB. Below ~ −1.6 dB (the Shannon limit) no scheme can be reliable at all — which is exactly the room error-correcting codes work in.
             </p>
           </Panel>
         </div>
       </div>
       <Deeper
-        recap="A digital link\u2019s quality is the bit error rate as a function of Eb/N0. For BPSK each bit is \u00b1\u221aEb in noise of density N0, so a bit flips when noise exceeds the halfway point \u2014 probability Q(\u221a(2\u00b7Eb/N0)). QPSK is two such bits on I and Q, identical in Eb/N0. Square QAM packs more bits per symbol but at smaller spacing, so it needs more Eb/N0 for the same BER. The Monte-Carlo dots confirm these formulas by direct counting."
+        recap="A digital link’s quality is the bit error rate as a function of Eb/N0. For BPSK each bit is ±√Eb in noise of density N0, so a bit flips when noise exceeds the halfway point — probability Q(√(2·Eb/N0)). QPSK is two such bits on I and Q, identical in Eb/N0. Square QAM packs more bits per symbol but at smaller spacing, so it needs more Eb/N0 for the same BER. The Monte-Carlo dots confirm these formulas by direct counting."
         example={`BER formulas (Gray-coded, AWGN):
-   BPSK / QPSK :  Q(\u221a(2\u00b7Eb/N0))
-   16QAM       :  \u2248 0.75 \u00b7 Q(\u221a(0.8\u00b7Eb/N0))
+   BPSK / QPSK :  Q(√(2·Eb/N0))
+   16QAM       :  ≈ 0.75 · Q(√(0.8·Eb/N0))
 
 To reach BER = 1e-5:
-   BPSK/QPSK \u2248 9.6 dB Eb/N0
-   16QAM     \u2248 13.4 dB     (about 3.8 dB more for 2\u00d7 the bits)
+   BPSK/QPSK ≈ 9.6 dB Eb/N0
+   16QAM     ≈ 13.4 dB     (about 3.8 dB more for 2× the bits)
 
 Monte-Carlo at 8 dB (counting ~25k symbols of errors):
-   BPSK \u2248 2e-4, matching Q(\u221a(2\u00b710^0.8)). The dots sit on the
+   BPSK ≈ 2e-4, matching Q(√(2·10^0.8)). The dots sit on the
    lines because both sides are the same real DSP.`}
       />
     </div>
@@ -376,7 +376,7 @@ function QuadratureModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "The quadrature demodulator is the analog front end that creates I and Q: split the RF, multiply one copy by cos and the other by a 90°-shifted −sin from a local oscillator, then low-pass filter. The two outputs are I and Q." },
-          { t: "Intuition", c: C.Q, x: "Mixing by cos and sin projects the RF onto two perpendicular axes \u2014 exactly the real and imaginary parts of Part 1\u2019s arrow. This hardware is where the complex sample physically comes from." },
+          { t: "Intuition", c: C.Q, x: "Mixing by cos and sin projects the RF onto two perpendicular axes — exactly the real and imaginary parts of Part 1’s arrow. This hardware is where the complex sample physically comes from." },
           { t: "Heads up", c: C.warn, x: "Real hardware is imperfect: a DC offset shifts the whole constellation off-centre, and gain or phase mismatch between the I and Q paths (I/Q imbalance) skews the square into a parallelogram." },
         ]}
         n="0.4" title="The analog quadrature demodulator"
@@ -409,17 +409,17 @@ function QuadratureModule() {
         </div>
       </div>
       <Deeper
-        recap="A quadrature demodulator multiplies the received RF by cos(2\u03c0f_c t) and by \u2212sin(2\u03c0f_c t) from a local oscillator, then low-pass filters each \u2014 recovering the baseband I and Q that were modulated onto the carrier. Because cos and sin are orthogonal, this cleanly separates the two. Hardware imperfections then show up geometrically: a DC offset adds a constant to I/Q (whole constellation shifts), and gain/phase mismatch between the paths skews the constellation."
-        example={`Transmit s(t) = I\u00b7cos(2\u03c0f_c t) \u2212 Q\u00b7sin(2\u03c0f_c t). At the receiver:
-   2\u00b7s(t)\u00b7cos(2\u03c0f_c t)  \u2014LPF\u2192  I      (the cos\u00d7cos term)
-   \u22122\u00b7s(t)\u00b7sin(2\u03c0f_c t) \u2014LPF\u2192  Q      (the sin\u00d7sin term)
-   \u2192 with a perfect LO, exactly (I, Q) back. (Verified: 0.7, \u22120.3.)
+        recap="A quadrature demodulator multiplies the received RF by cos(2πf_c t) and by −sin(2πf_c t) from a local oscillator, then low-pass filters each — recovering the baseband I and Q that were modulated onto the carrier. Because cos and sin are orthogonal, this cleanly separates the two. Hardware imperfections then show up geometrically: a DC offset adds a constant to I/Q (whole constellation shifts), and gain/phase mismatch between the paths skews the constellation."
+        example={`Transmit s(t) = I·cos(2πf_c t) − Q·sin(2πf_c t). At the receiver:
+   2·s(t)·cos(2πf_c t)  —LPF→  I      (the cos×cos term)
+   −2·s(t)·sin(2πf_c t) —LPF→  Q      (the sin×sin term)
+   → with a perfect LO, exactly (I, Q) back. (Verified: 0.7, −0.3.)
 
 Impairments (applied to the recovered point):
-   DC offset:      I\u2032 = I + d_I,   Q\u2032 = Q + d_Q     (shift)
-   I/Q imbalance:  Q\u2032 = (1+g)\u00b7(I\u00b7sin\u03c6 + Q\u00b7cos\u03c6)     (shear)
-A 10% gain + 10\u00b0 phase error turns (0.7, \u22120.3) into (0.76, \u22120.33)
-\u2014 the parallelogram you see, which the receiver must calibrate out.`}
+   DC offset:      I′ = I + d_I,   Q′ = Q + d_Q     (shift)
+   I/Q imbalance:  Q′ = (1+g)·(I·sinφ + Q·cosφ)     (shear)
+A 10% gain + 10° phase error turns (0.7, −0.3) into (0.76, −0.33)
+— the parallelogram you see, which the receiver must calibrate out.`}
       />
     </div>
   );
@@ -446,7 +446,7 @@ function Predict({ q, options, answer, why }) {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
       </div>
-      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" — "}{why}</div>}
     </div>
   );
 }
@@ -490,7 +490,7 @@ export default function App() {
           </p>
           {reduced && <p style={{ fontFamily: FONT.mono, fontSize: 11, color: C.faint, marginTop: 10 }}>Reduced-motion on — all views are static and respond to controls.</p>}
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
-            {MODULES.map((m, i) => <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}><span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span></button>)}
+            {MODULES.map((m, i) => <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}><span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"•"}</span>)}</span></button>)}
           </nav>
         </header>
         {PREDICTS[active] && <Predict q={PREDICTS[active].q} options={PREDICTS[active].options} answer={PREDICTS[active].answer} why={PREDICTS[active].why} />}

@@ -110,7 +110,7 @@ function Deeper({ recap, example }) {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ marginTop: 18 }}>
-      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>{open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}</button>
+      <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>{open ? "▾  hide the deeper dive" : "▸  go deeper — recap & a worked example"}</button>
       {open && <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
         <div style={{ fontFamily: FONT.mono, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: C.Q, marginBottom: 6 }}>So what just happened</div>
         <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.sub, lineHeight: 1.62, margin: "0 0 16px" }}>{recap}</p>
@@ -179,8 +179,8 @@ function PulseEyeModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "A root-raised-cosine (RRC) pulse shapes each symbol so the spectrum stays compact. Put one at the transmitter and a matching one at the receiver and together they form a raised cosine \u2014 a Nyquist pulse with zero inter-symbol interference at the sampling instants." },
-          { t: "Intuition", c: C.Q, x: "Overlay every two-symbol slice of the waveform and you get the eye diagram. A wide-open eye means there\u2019s a clear instant where every symbol is far from the decision line; a closed eye means neighbours bleed together." },
+          { t: "Term", c: C.A, x: "A root-raised-cosine (RRC) pulse shapes each symbol so the spectrum stays compact. Put one at the transmitter and a matching one at the receiver and together they form a raised cosine — a Nyquist pulse with zero inter-symbol interference at the sampling instants." },
+          { t: "Intuition", c: C.Q, x: "Overlay every two-symbol slice of the waveform and you get the eye diagram. A wide-open eye means there’s a clear instant where every symbol is far from the decision line; a closed eye means neighbours bleed together." },
           { t: "Try it", c: C.D, x: "Raise the roll-off and the eye opens wider (at the cost of more bandwidth). Add noise and the eyelids fuzz; turn off the matched filter and watch the eye partly close as out-of-band noise leaks in." },
         ]}
         n="08.1" title="Pulse shaping and the eye diagram"
@@ -207,24 +207,24 @@ function PulseEyeModule() {
           </Panel>
           <Panel label="Why a matched filter">
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: 0, lineHeight: 1.55 }}>
-              The receiver\u2019s RRC isn\u2019t just for shape \u2014 it\u2019s the matched filter that maximises signal-to-noise at the decision instant. Turn it off and the eye closes because broadband noise that the filter would have rejected stays in.
+              The receiver’s RRC isn’t just for shape — it’s the matched filter that maximises signal-to-noise at the decision instant. Turn it off and the eye closes because broadband noise that the filter would have rejected stays in.
             </p>
           </Panel>
         </div>
       </div>
       <Deeper
-        recap="Square pulses have endless spectral tails, so each symbol is shaped by a root-raised-cosine filter. RRC alone isn't ISI-free \u2014 but RRC at the transmitter convolved with RRC at the receiver equals a raised cosine, which passes through zero at every other symbol instant. So at the right sampling moment each symbol is clean of its neighbours, and the matched RX filter also maximises SNR. The eye diagram is just the proof, drawn by overlaying two-symbol windows."
+        recap="Square pulses have endless spectral tails, so each symbol is shaped by a root-raised-cosine filter. RRC alone isn't ISI-free — but RRC at the transmitter convolved with RRC at the receiver equals a raised cosine, which passes through zero at every other symbol instant. So at the right sampling moment each symbol is clean of its neighbours, and the matched RX filter also maximises SNR. The eye diagram is just the proof, drawn by overlaying two-symbol windows."
         example={`Raised cosine = RRC(tx) * RRC(rx), sampled at symbol spacing T:
-   t = 0    \u2192 1.00   (your symbol)
-   t = \u00b1T   \u2192 0.00   (neighbours contribute nothing)
-   t = \u00b12T  \u2192 0.00
-That row of zeros at \u00b1T, \u00b12T, \u2026 is the Nyquist no-ISI property,
+   t = 0    → 1.00   (your symbol)
+   t = ±T   → 0.00   (neighbours contribute nothing)
+   t = ±2T  → 0.00
+That row of zeros at ±T, ±2T, … is the Nyquist no-ISI property,
 and it's why the eye has a clean opening at t = 0.
 
-Roll-off \u03b2 trades bandwidth for eye width:
-   bandwidth = (1 + \u03b2) \u00d7 (symbol rate / 2)
-   \u03b2 = 0.25 \u2192 25% excess BW, a moderately open eye
-   \u03b2 = 1.0  \u2192 100% excess BW, the widest, most robust eye`}
+Roll-off β trades bandwidth for eye width:
+   bandwidth = (1 + β) × (symbol rate / 2)
+   β = 0.25 → 25% excess BW, a moderately open eye
+   β = 1.0  → 100% excess BW, the widest, most robust eye`}
       />
     </div>
   );
@@ -278,7 +278,7 @@ function CarrierModule({ reduced }) {
       const ctx = tc._ctx || (tc._ctx = fitCanvas(tc, tc.clientWidth, tc.clientHeight));
       const w = tc.clientWidth, h = tc.clientHeight, midY = h / 2; ctx.clearRect(0, 0, w, h);
       ctx.strokeStyle = C.gridFaint; ctx.beginPath(); ctx.moveTo(0, midY); ctx.lineTo(w, midY); ctx.stroke();
-      ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("phase-detector error vs symbol \u2192", 4, 11);
+      ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "left"; ctx.fillText("phase-detector error vs symbol →", 4, 11);
       ctx.strokeStyle = C.B; ctx.lineWidth = 1.4; ctx.beginPath();
       const n = pts.length; for (let k = 0; k < hd; k++) { const x = (k / n) * w, y = midY - Math.max(-1.5, Math.min(1.5, err[k])) * (h / 2) * 0.5; k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
     }
@@ -290,9 +290,9 @@ function CarrierModule({ reduced }) {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "The receiver\u2019s local oscillator never exactly matches the transmitter\u2019s, so the baseband constellation arrives rotated (phase offset) and slowly spinning (frequency offset). Carrier recovery is the loop that cancels both." },
+          { t: "Term", c: C.A, x: "The receiver’s local oscillator never exactly matches the transmitter’s, so the baseband constellation arrives rotated (phase offset) and slowly spinning (frequency offset). Carrier recovery is the loop that cancels both." },
           { t: "Intuition", c: C.Q, x: "A Costas loop is a PLL with no actual carrier to lock to. It measures how far the points sit from where they should be, then steers a numerically-controlled oscillator to de-rotate them until they snap into place." },
-          { t: "Heads up", c: C.warn, x: "Wider loop bandwidth locks faster but lets in more jitter; too narrow and it can\u2019t catch a big frequency offset. There\u2019s also a 90\u00b0 phase ambiguity QPSK resolves with known/differential bits." },
+          { t: "Heads up", c: C.warn, x: "Wider loop bandwidth locks faster but lets in more jitter; too narrow and it can’t catch a big frequency offset. There’s also a 90° phase ambiguity QPSK resolves with known/differential bits." },
         ]}
         n="08.2" title="Carrier recovery — the Costas loop"
         body="Mix down with an oscillator that's a hair off the transmitter's and your constellation spins. A Costas loop fixes this without ever seeing a pure carrier: it derives a phase-error signal directly from the data-bearing samples and drives an oscillator to undo the rotation. Watch the smeared, spinning cloud collapse onto the four QPSK points as the loop locks." />
@@ -320,18 +320,18 @@ function CarrierModule({ reduced }) {
         </div>
       </div>
       <Deeper
-        recap="A Costas loop recovers the carrier for suppressed-carrier formats like PSK. Each sample is de-rotated by the loop\u2019s current phase estimate; a phase detector then reports how far the result still sits from an ideal symbol, and a small (proportional + integral) loop filter nudges the oscillator\u2019s phase and frequency to drive that error to zero. The integral term is what lets it track a constant frequency offset, not just a fixed phase."
+        recap="A Costas loop recovers the carrier for suppressed-carrier formats like PSK. Each sample is de-rotated by the loop’s current phase estimate; a phase detector then reports how far the result still sits from an ideal symbol, and a small (proportional + integral) loop filter nudges the oscillator’s phase and frequency to drive that error to zero. The integral term is what lets it track a constant frequency offset, not just a fixed phase."
         example={`QPSK Costas phase detector (per de-rotated sample y = I + jQ):
-   e = sign(I)\u00b7Q \u2212 sign(Q)\u00b7I
-   \u2192 at a correct point like (0.707, 0.707): e = 0.707 \u2212 0.707 = 0
-   \u2192 if rotated slightly +\u03b8: e \u2248 +\u03b8 (pushes the loop back)
+   e = sign(I)·Q − sign(Q)·I
+   → at a correct point like (0.707, 0.707): e = 0.707 − 0.707 = 0
+   → if rotated slightly +θ: e ≈ +θ (pushes the loop back)
 
 Loop update each symbol:
-   freq  += a\u2082 \u00b7 e        (integrator: tracks frequency offset)
-   phase += freq + a\u2081 \u00b7 e  (proportional: tracks phase)
+   freq  += a₂ · e        (integrator: tracks frequency offset)
+   phase += freq + a₁ · e  (proportional: tracks phase)
 
 With offset 0.008 cyc/sym at 20 dB this locks in a few hundred
-symbols to ~4\u00b0 jitter; the frequency estimate converges to 0.008.`}
+symbols to ~4° jitter; the frequency estimate converges to 0.008.`}
       />
     </div>
   );
@@ -376,7 +376,7 @@ function TimingModule() {
       const xOf = (t) => padX + ((t + 0.5)) * (w - 2 * padX), yOf = (e) => midY - (e / mx) * (h / 2) * 0.82;
       ctx.strokeStyle = C.D; ctx.lineWidth = 1.8; ctx.beginPath(); scurve.forEach(([t, e], i) => { const x = xOf(t), y = yOf(e); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
       const x = xOf(tau), y = yOf(eNow); ctx.fillStyle = C.I; ctx.beginPath(); ctx.arc(x, y, 4.5, 0, 7); ctx.fill();
-      ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "center"; ctx.fillText("τ = 0 (optimal)", w / 2, h - 5); ctx.textAlign = "left"; ctx.fillText("timing error e(τ) \u2192", 4, 11);
+      ctx.fillStyle = C.faint; ctx.font = `9px ${FONT.mono}`; ctx.textAlign = "center"; ctx.fillText("τ = 0 (optimal)", w / 2, h - 5); ctx.textAlign = "left"; ctx.fillText("timing error e(τ) →", 4, 11);
     }
     const cc = cRef.current;
     if (cc) {
@@ -393,8 +393,8 @@ function TimingModule() {
       <Lead
         notes={[
           { t: "Term", c: C.A, x: "Even with the carrier fixed, the receiver must sample at exactly the right instant in each symbol. A timing-error detector measures how far off the sampling phase is; here, the Gardner detector, which works at two samples per symbol and needs no carrier lock." },
-          { t: "Intuition", c: C.Q, x: "Gardner looks at the value halfway between two symbol samples. At the right timing that midpoint sits at a zero-crossing; if it doesn\u2019t, its sign and size say which way the clock has drifted." },
-          { t: "Try it", c: C.D, x: "Slide the sampling offset τ and watch two things move together: the recovered levels smear away from \u00b11, and the operating dot climbs the S-curve. The loop\u2019s whole job is to drive that dot back to the centre zero." },
+          { t: "Intuition", c: C.Q, x: "Gardner looks at the value halfway between two symbol samples. At the right timing that midpoint sits at a zero-crossing; if it doesn’t, its sign and size say which way the clock has drifted." },
+          { t: "Try it", c: C.D, x: "Slide the sampling offset τ and watch two things move together: the recovered levels smear away from ±1, and the operating dot climbs the S-curve. The loop’s whole job is to drive that dot back to the centre zero." },
         ]}
         n="08.3" title="Symbol-timing recovery — the Gardner detector"
         body="The receiver's clock doesn't line up with the transmitter's, so it must find the right instant to sample each symbol. A timing-error detector turns the sampled waveform into an error that's zero at the perfect instant and signed otherwise — an S-curve. The Gardner detector does this with just two samples per symbol. Slide the sampling phase and see the recovered symbols smear and the detector light up." />
@@ -420,24 +420,24 @@ function TimingModule() {
           </Panel>
           <Panel label="What you're seeing">
             <p style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, margin: 0, lineHeight: 1.55 }}>
-              At τ = 0 the recovered values sit tight on \u00b11 (clean symbols). Move off and they collapse toward the middle as you sample on the pulse\u2019s slopes \u2014 the same closing you saw in the eye diagram, now as a number the loop can act on.
+              At τ = 0 the recovered values sit tight on ±1 (clean symbols). Move off and they collapse toward the middle as you sample on the pulse’s slopes — the same closing you saw in the eye diagram, now as a number the loop can act on.
             </p>
           </Panel>
         </div>
       </div>
       <Deeper
         recap="Sampling at the wrong moment within a symbol smears the values toward the decision line, just like a closing eye. The Gardner detector reads the sample halfway between two symbol instants: at correct timing that midpoint is a zero-crossing of the pulse, so multiplying it by the change between the two symbols gives zero; off-timing it's nonzero with a sign that tells the clock which way to move. Averaged over symbols this traces the S-curve, and a loop slides the sampling phase to its zero."
-        example={`Gardner error at 2 samples/symbol, samples z[\u00b7]:
-   for symbol k:  early = z[2k\u22122], mid = z[2k\u22121], late = z[2k]
-   e[k] = mid \u00b7 (late \u2212 early)     (sum I and Q for complex)
+        example={`Gardner error at 2 samples/symbol, samples z[·]:
+   for symbol k:  early = z[2k−2], mid = z[2k−1], late = z[2k]
+   e[k] = mid · (late − early)     (sum I and Q for complex)
 
 Sweeping the sampling offset τ gives an odd S-curve:
-   τ = \u22120.3 \u2192 e \u2248 \u22120.16      (sampling early \u2192 negative)
-   τ =  0.0 \u2192 e \u2248  0.00      (locked)
-   τ = +0.3 \u2192 e \u2248 +0.16      (sampling late \u2192 positive)
+   τ = −0.3 → e ≈ −0.16      (sampling early → negative)
+   τ =  0.0 → e ≈  0.00      (locked)
+   τ = +0.3 → e ≈ +0.16      (sampling late → positive)
 
 The sign points the loop home; the slope at zero sets how
-hard it pulls. No carrier lock required \u2014 Gardner runs on
+hard it pulls. No carrier lock required — Gardner runs on
 the magnitude pattern alone.`}
       />
     </div>
@@ -485,9 +485,9 @@ function SlicerModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.A, x: "The slicer (decision device) maps each recovered (I, Q) sample to the nearest constellation point, then the demapper reads off that point\u2019s bits. It\u2019s the last step: samples in, bits out." },
-          { t: "Intuition", c: C.Q, x: "Draw the decision boundaries halfway between symbols. A sample is decoded as whichever point\u2019s region it falls in. Land in the right region and the bits are perfect; cross a boundary and you get a symbol error." },
-          { t: "Heads up", c: C.warn, x: "Thanks to Gray coding, a symbol that slips into an adjacent region usually flips just one bit \u2014 so the bit error rate stays well below the symbol error rate. Coding (Priority 5) cleans up what remains." },
+          { t: "Term", c: C.A, x: "The slicer (decision device) maps each recovered (I, Q) sample to the nearest constellation point, then the demapper reads off that point’s bits. It’s the last step: samples in, bits out." },
+          { t: "Intuition", c: C.Q, x: "Draw the decision boundaries halfway between symbols. A sample is decoded as whichever point’s region it falls in. Land in the right region and the bits are perfect; cross a boundary and you get a symbol error." },
+          { t: "Heads up", c: C.warn, x: "Thanks to Gray coding, a symbol that slips into an adjacent region usually flips just one bit — so the bit error rate stays well below the symbol error rate. Coding (Priority 5) cleans up what remains." },
         ]}
         n="08.4" title="The slicer — turning samples back into bits"
         body="Carrier locked, timing locked: now each symbol is a single (I, Q) point sitting near its ideal location. The slicer picks the nearest legal point and the demapper reads its bits. Where noise pushes a sample across a decision boundary, you get an error — colored red here. This is the end of the receiver chain, and the live error counts set up the BER-vs-SNR curve coming in the foundations pass." />
@@ -521,17 +521,17 @@ function SlicerModule() {
         </div>
       </div>
       <Deeper
-        recap="With carrier and timing recovered, each symbol is one point near its ideal spot. The slicer is a nearest-neighbour decision: whichever constellation point is closest wins, and its Gray-coded label is the recovered bits. Errors occur only when noise carries a sample across a decision boundary, and because Gray neighbours differ by one bit, most symbol errors cost a single bit \u2014 keeping the bit error rate below the symbol error rate."
+        recap="With carrier and timing recovered, each symbol is one point near its ideal spot. The slicer is a nearest-neighbour decision: whichever constellation point is closest wins, and its Gray-coded label is the recovered bits. Errors occur only when noise carries a sample across a decision boundary, and because Gray neighbours differ by one bit, most symbol errors cost a single bit — keeping the bit error rate below the symbol error rate."
         example={`QPSK decision regions are just the four quadrants:
-   received (\u22120.2, +0.9) \u2192 nearest ideal point (\u22120.707,+0.707)
-                          \u2192 label 01  \u2192 bits \u201c01\u201d
-A sample at (+0.05, +0.9) still lands in the +Q,\u2212I... no:
-   (+0.05,+0.9) \u2192 nearest (\u22120.707,+0.707)? distance check picks
-   the same quadrant boundary \u2014 a near-miss flips ONE bit, not two,
+   received (−0.2, +0.9) → nearest ideal point (−0.707,+0.707)
+                          → label 01  → bits “01”
+A sample at (+0.05, +0.9) still lands in the +Q,−I... no:
+   (+0.05,+0.9) → nearest (−0.707,+0.707)? distance check picks
+   the same quadrant boundary — a near-miss flips ONE bit, not two,
    because adjacent QPSK labels are Gray-coded (00 01 11 10).
 
 Symbol error rate counts wrong points; bit error rate counts
-wrong bits. With Gray coding BER \u2248 SER / log\u2082(M) at high SNR \u2014
+wrong bits. With Gray coding BER ≈ SER / log₂(M) at high SNR —
 the exact link the BER-vs-SNR curve will quantify next.`}
       />
     </div>
@@ -559,7 +559,7 @@ function Predict({ q, options, answer, why }) {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
       </div>
-      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" — "}{why}</div>}
     </div>
   );
 }
@@ -603,7 +603,7 @@ export default function App() {
           </p>
           {reduced && <p style={{ fontFamily: FONT.mono, fontSize: 11, color: C.faint, marginTop: 10 }}>Reduced-motion on — the Costas view shows the locked result; everything still responds to controls.</p>}
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
-            {MODULES.map((m, i) => <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}><span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span></button>)}
+            {MODULES.map((m, i) => <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}><span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"•"}</span>)}</span></button>)}
           </nav>
         </header>
         {PREDICTS[active] && <Predict q={PREDICTS[active].q} options={PREDICTS[active].options} answer={PREDICTS[active].answer} why={PREDICTS[active].why} />}

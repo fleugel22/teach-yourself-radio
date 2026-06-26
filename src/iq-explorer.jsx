@@ -33,7 +33,7 @@ const FONT = {
 };
 
 /* ---------- tiny helpers ---------- */
-const sgn = (x, d = 3) => (x >= 0 ? "+" : "\u2212") + Math.abs(x).toFixed(d);
+const sgn = (x, d = 3) => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(d);
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 
 function usePrefersReducedMotion() {
@@ -253,7 +253,7 @@ function PhasorModule({ reduced }) {
     if (out.I.current) out.I.current.textContent = sgn(x, 3);
     if (out.Q.current) out.Q.current.textContent = sgn(y, 3);
     if (out.mag.current) out.mag.current.textContent = amp.toFixed(3);
-    if (out.ph.current) out.ph.current.textContent = sgn((ph * 180) / Math.PI, 1) + "\u00B0";
+    if (out.ph.current) out.ph.current.textContent = sgn((ph * 180) / Math.PI, 1) + "°";
   }
 
   function drawWave(theta) {
@@ -284,7 +284,7 @@ function PhasorModule({ reduced }) {
     };
     plot(H.I, C.I); plot(H.Q, C.Q);
     ctx.fillStyle = C.faint; ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "left";
-    ctx.fillText("\u2190 earlier      now \u2192", 8, h - 8);
+    ctx.fillText("← earlier      now →", 8, h - 8);
   }
 
   useRaf((el) => { const th = 2 * Math.PI * st.current.off * el * SPEED; drawPlane(th); drawWave(th); }, !reduced);
@@ -303,9 +303,9 @@ function PhasorModule({ reduced }) {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.s1, x: "\u201CComplex\u201D just means a 2-D coordinate: I is the left\u2013right position, Q the up\u2013down. The pair names one point \u2014 nothing imaginary about it in practice." },
-          { t: "Intuition", c: C.Q, x: "A single up-and-down wiggle can\u2019t reveal which way an arrow turns \u2014 clockwise and counter-clockwise look identical. Keeping both shadows preserves direction: the difference between a station above your dial and one below it." },
-          { t: "Try it", c: C.I, x: "Set the frequency to 0 and the arrow parks \u2014 a signal sitting exactly on your tuned frequency. Then swing it negative vs positive: same speed, opposite spin." },
+          { t: "Term", c: C.s1, x: "“Complex” just means a 2-D coordinate: I is the left–right position, Q the up–down. The pair names one point — nothing imaginary about it in practice." },
+          { t: "Intuition", c: C.Q, x: "A single up-and-down wiggle can’t reveal which way an arrow turns — clockwise and counter-clockwise look identical. Keeping both shadows preserves direction: the difference between a station above your dial and one below it." },
+          { t: "Try it", c: C.I, x: "Set the frequency to 0 and the arrow parks — a signal sitting exactly on your tuned frequency. Then swing it negative vs positive: same speed, opposite spin." },
         ]}
         n="01" title="One signal is a spinning arrow"
         body="A complex sample is just a point in a 2-D plane: the I value runs left–right, the Q value runs up–down. A steady signal makes that point spin at a constant rate. Watch the two coloured shadows it casts on the axes — those two numbers are exactly what gets written to the file, one pair per moment in time." />
@@ -341,19 +341,19 @@ function PhasorModule({ reduced }) {
         </div>
       </div>
       <Deeper
-        recap="A single complex sample isn't two separate numbers \u2014 it's one arrow in the plane. I is how far along the real axis, Q how far up the imaginary axis; together they fix the arrow's length (amplitude) and angle (phase). Play many samples per second and the arrow spins, and that rotation rate is the signal's frequency. Crucially, which way it spins distinguishes positive from negative frequency \u2014 the one thing a single real channel can't capture."
+        recap="A single complex sample isn't two separate numbers — it's one arrow in the plane. I is how far along the real axis, Q how far up the imaginary axis; together they fix the arrow's length (amplitude) and angle (phase). Play many samples per second and the arrow spins, and that rotation rate is the signal's frequency. Crucially, which way it spins distinguishes positive from negative frequency — the one thing a single real channel can't capture."
         example={`One sample with I = 0.6, Q = 0.8:
-   amplitude = \u221a(I\u00b2+Q\u00b2) = \u221a(0.36+0.64) = 1.0
-   phase     = atan2(Q, I)  = atan2(0.8, 0.6) = 53.1\u00b0
+   amplitude = √(I²+Q²) = √(0.36+0.64) = 1.0
+   phase     = atan2(Q, I)  = atan2(0.8, 0.6) = 53.1°
 
 A 1 kHz tone sampled at 8 kHz turns 1000/8000 of a circle
-per sample = 45\u00b0 each step:
-   n=0: 0\u00b0    n=1: 45\u00b0    n=2: 90\u00b0    n=3: 135\u00b0 ...
-   I = cos(45\u00b0\u00b7n),  Q = sin(45\u00b0\u00b7n)
+per sample = 45° each step:
+   n=0: 0°    n=1: 45°    n=2: 90°    n=3: 135° ...
+   I = cos(45°·n),  Q = sin(45°·n)
 
-Flip to \u22121 kHz and the arrow spins the other way (\u221245\u00b0/step).
-The I waveform looks identical; only Q's sign flips \u2014 which is
-exactly the \u00b1frequency information Q exists to carry.`}
+Flip to −1 kHz and the arrow spins the other way (−45°/step).
+The I waveform looks identical; only Q's sign flips — which is
+exactly the ±frequency information Q exists to carry.`}
       />
     </div>
   );
@@ -485,9 +485,9 @@ function SuperposModule({ reduced }) {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.s1, x: "Superposition: waves simply add. Two signals don\u2019t fuse into a third thing \u2014 they coexist, the way a musical chord still contains each separate note." },
-          { t: "Intuition", c: C.Q, x: "Every transmitter in range pushes the same antenna at once, so you measure their running total \u2014 one value at each instant. The air keeps no separate envelopes, and neither does the file." },
-          { t: "Try it", c: C.I, x: "Switch on a second signal and the white tip traces loops instead of a clean circle. Every extra wiggle is real information \u2014 the spectrum lesson reads it back out." },
+          { t: "Term", c: C.s1, x: "Superposition: waves simply add. Two signals don’t fuse into a third thing — they coexist, the way a musical chord still contains each separate note." },
+          { t: "Intuition", c: C.Q, x: "Every transmitter in range pushes the same antenna at once, so you measure their running total — one value at each instant. The air keeps no separate envelopes, and neither does the file." },
+          { t: "Try it", c: C.I, x: "Switch on a second signal and the white tip traces loops instead of a clean circle. Every extra wiggle is real information — the spectrum lesson reads it back out." },
         ]}
         n="02" title="Many signals add into one arrow"
         body="Your antenna only ever feels one voltage at a time — the sum of every transmission in the air. Give each signal its own spinning arrow, then lay them tip-to-tail. The white arrow is their running total, and its tip is the only thing the recorder writes down. That’s why two numbers are enough no matter how many stations are on the air." />
@@ -516,17 +516,17 @@ function SuperposModule({ reduced }) {
         </div>
       </div>
       <Deeper
-        recap="When several signals share the band the antenna doesn't receive a list of them \u2014 it receives their vector sum, one arrow that is the tip-to-tail addition of each signal's arrow at that instant. No information is destroyed, but it's entangled: the only handle on the parts is that each spins at its own rate, so the summed arrow's path over many samples carries their separate fingerprints."
+        recap="When several signals share the band the antenna doesn't receive a list of them — it receives their vector sum, one arrow that is the tip-to-tail addition of each signal's arrow at that instant. No information is destroyed, but it's entangled: the only handle on the parts is that each spins at its own rate, so the summed arrow's path over many samples carries their separate fingerprints."
         example={`Two tones at one instant:
-   signal A:  0.50 \u2220 30\u00b0  = (0.433,  0.250)
-   signal B:  0.30 \u2220120\u00b0  = (\u22120.150, 0.260)
-   recorded sum             = (0.283,  0.510) = 0.583 \u2220 61\u00b0
+   signal A:  0.50 ∠ 30°  = (0.433,  0.250)
+   signal B:  0.30 ∠120°  = (−0.150, 0.260)
+   recorded sum             = (0.283,  0.510) = 0.583 ∠ 61°
 
 That single (0.283, 0.510) pair is everything the recorder
 stores for this instant. One sample later each arrow has
 rotated by its own frequency, so the sum lands somewhere new.
 Over many samples those two rotation rates trace a pattern an
-FFT can separate \u2014 which is the next module.`}
+FFT can separate — which is the next module.`}
       />
     </div>
   );
@@ -618,7 +618,7 @@ function SpectrumModule({ reduced }) {
     for (let i = 0; i < N; i++) { const xx = (i / (N - 1)) * w, yy = padT + plotH - sh[i] * plotH * 0.94; i ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); }
     ctx.stroke();
     // labels
-    ctx.fillStyle = C.faint; ctx.textAlign = "left"; ctx.fillText("\u2212½ rate", 4, padT + 10);
+    ctx.fillStyle = C.faint; ctx.textAlign = "left"; ctx.fillText("−½ rate", 4, padT + 10);
     ctx.textAlign = "right"; ctx.fillText("+½ rate", w - 4, padT + 10);
     ctx.textAlign = "center"; ctx.fillStyle = C.sub; ctx.fillText("centre", w / 2, padT + 10);
   }
@@ -673,9 +673,9 @@ function SpectrumModule({ reduced }) {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.s1, x: "Fourier transform: a machine that takes a stretch of the combined wiggle and reports how much of each spin-rate is inside \u2014 one bar per frequency. The mathematical un-mixer." },
-          { t: "Intuition", c: C.Q, x: "In one sample the signals are hopelessly added; across many samples each one\u2019s steady rate makes it stand out \u2014 like hearing a sustained note inside a chord by its pitch." },
-          { t: "Heads up", c: C.s2, x: "You only see frequencies within \u00B1half the sample rate. A signal just past the edge doesn\u2019t vanish \u2014 it folds back inside and impersonates another frequency (aliasing). Sample faster to widen the view." },
+          { t: "Term", c: C.s1, x: "Fourier transform: a machine that takes a stretch of the combined wiggle and reports how much of each spin-rate is inside — one bar per frequency. The mathematical un-mixer." },
+          { t: "Intuition", c: C.Q, x: "In one sample the signals are hopelessly added; across many samples each one’s steady rate makes it stand out — like hearing a sustained note inside a chord by its pitch." },
+          { t: "Heads up", c: C.s2, x: "You only see frequencies within ±half the sample rate. A signal just past the edge doesn’t vanish — it folds back inside and impersonates another frequency (aliasing). Sample faster to widen the view." },
         ]}
         n="03" title="Pull them apart by frequency"
         body="Each signal’s arrow spins at its own rate. A Fourier transform measures those rates across a block of samples and sorts the tangled sum back into separate peaks — one per signal, placed at its frequency offset. Stack those spectra over time and you get the waterfall every radio operator stares at. Notice the separation lives in the sequence of samples, never in any single one." />
@@ -707,14 +707,14 @@ function SpectrumModule({ reduced }) {
         </div>
       </div>
       <Deeper
-        recap="An FFT takes a block of I/Q samples and reports how much energy sits at each frequency, turning the spinning-arrow time view into a stack of peaks \u2014 one per signal. The window it can see spans the sample rate, from \u2212Fs/2 to +Fs/2 around your tuned centre. Signals beyond that edge don't disappear; they alias, folding back to a false frequency inside the window."
-        example={`Sample rate Fs = 24, so the visible window is \u221212 \u2026 +12.
-   a tone at +5   \u2192 peak at +5    (inside \u2014 fine)
-   a tone at +14  \u2192 14 is 2 past +12, so it folds to
-                     14 \u2212 24 = \u221210  \u2192 a FALSE peak at \u221210
+        recap="An FFT takes a block of I/Q samples and reports how much energy sits at each frequency, turning the spinning-arrow time view into a stack of peaks — one per signal. The window it can see spans the sample rate, from −Fs/2 to +Fs/2 around your tuned centre. Signals beyond that edge don't disappear; they alias, folding back to a false frequency inside the window."
+        example={`Sample rate Fs = 24, so the visible window is −12 … +12.
+   a tone at +5   → peak at +5    (inside — fine)
+   a tone at +14  → 14 is 2 past +12, so it folds to
+                     14 − 24 = −10  → a FALSE peak at −10
 
 The rule: anything above +Fs/2 wraps down by Fs. That folding
-is aliasing \u2014 the reason you must sample fast enough (or filter
+is aliasing — the reason you must sample fast enough (or filter
 first) to cover every signal you actually care about.`}
       />
     </div>
@@ -766,9 +766,9 @@ function EncodingModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.s1, x: "Little-endian: the byte order, least-significant first. It\u2019s a convention \u2014 read the bytes in the wrong order and your numbers turn to nonsense, a classic first-day bug." },
-          { t: "Intuition", c: C.Q, x: "Because the raw file is only numbers, it can\u2019t state its own sample rate or centre frequency \u2014 much as a column of temperatures won\u2019t tell you which cities they came from. That context rides in a sidecar, or in whoever handed you the file." },
-          { t: "Heads up", c: C.s2, x: "\u201Ccomplex32\u201D is a trap word: confirm whether it means 32 bits per number or 32 bits total before parsing. The bytes-per-sample test on the right settles it in seconds." },
+          { t: "Term", c: C.s1, x: "Little-endian: the byte order, least-significant first. It’s a convention — read the bytes in the wrong order and your numbers turn to nonsense, a classic first-day bug." },
+          { t: "Intuition", c: C.Q, x: "Because the raw file is only numbers, it can’t state its own sample rate or centre frequency — much as a column of temperatures won’t tell you which cities they came from. That context rides in a sidecar, or in whoever handed you the file." },
+          { t: "Heads up", c: C.s2, x: "“complex32” is a trap word: confirm whether it means 32 bits per number or 32 bits total before parsing. The bytes-per-sample test on the right settles it in seconds." },
         ]}
         n="04" title="How the pairs land on disk"
         body="A raw I/Q file is usually just a flat stream with no header: I, Q, I, Q, I, Q … little-endian, nothing else. Because the bytes carry no labels, the sample rate, centre frequency, and even the number format have to be known separately. And “complex32” is ambiguous — it can mean 32 bits per component or 32 bits total. Here’s the same sample written three ways." />
@@ -827,17 +827,17 @@ function EncodingModule() {
         </div>
       </div>
       <Deeper
-        recap="On disk an I/Q file is just interleaved numbers \u2014 I\u2080, Q\u2080, I\u2081, Q\u2081, \u2026 with no header announcing what they mean. The ambiguity that bites people is the word \u2018complex32\u2019: it can mean 32 bits per component (two float32s, 8 bytes per sample) or 32 bits total (two 16-bit numbers, 4 bytes per sample). Guess wrong and every single sample is misread."
+        recap="On disk an I/Q file is just interleaved numbers — I₀, Q₀, I₁, Q₁, … with no header announcing what they mean. The ambiguity that bites people is the word ‘complex32’: it can mean 32 bits per component (two float32s, 8 bytes per sample) or 32 bits total (two 16-bit numbers, 4 bytes per sample). Guess wrong and every single sample is misread."
         example={`A file of 1,000,000 bytes holding 125,000 samples:
    1,000,000 / 125,000 = 8 bytes/sample
-   \u2192 two float32  (NumPy complex64, SigMF \u201ccf32\u201d)
+   → two float32  (NumPy complex64, SigMF “cf32”)
 
 If it were 500,000 bytes for those same 125,000 samples:
    500,000 / 125,000 = 4 bytes/sample
-   \u2192 two 16-bit values  (an int16 pair, or float16)
+   → two 16-bit values  (an int16 pair, or float16)
 
-Then sanity-check the values themselves: clustered near \u00b11
-\u2192 floats; swinging out to \u00b130,000 \u2192 int16. Size first to get
+Then sanity-check the values themselves: clustered near ±1
+→ floats; swinging out to ±30,000 → int16. Size first to get
 bytes-per-sample, values second to pin the type.`}
       />
     </div>
@@ -850,7 +850,7 @@ function Deeper({ recap, example }) {
   return (
     <div style={{ marginTop: 18 }}>
       <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>
-        {open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}
+        {open ? "▾  hide the deeper dive" : "▸  go deeper — recap & a worked example"}
       </button>
       {open && (
         <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
@@ -910,7 +910,7 @@ function Predict({ q, options, answer, why }) {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
       </div>
-      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" — "}{why}</div>}
     </div>
   );
 }
@@ -961,7 +961,7 @@ export default function App() {
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
             {MODULES.map((m, i) => (
               <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}>
-                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span>
+                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"•"}</span>)}</span>
               </button>
             ))}
           </nav>

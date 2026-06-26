@@ -22,7 +22,7 @@ const FONT = {
 const FS = 24, NB = 1024, BAND = 12;
 
 /* ---------- generic helpers ---------- */
-const sgn = (x, d = 2) => (x >= 0 ? "+" : "\u2212") + Math.abs(x).toFixed(d);
+const sgn = (x, d = 2) => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(d);
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 
 function usePrefersReducedMotion() {
@@ -188,7 +188,7 @@ function Deeper({ recap, example }) {
   return (
     <div style={{ marginTop: 18 }}>
       <button onClick={() => setOpen(!open)} style={{ fontFamily: FONT.mono, fontSize: 11.5, padding: "7px 13px", borderRadius: 6, border: `1px solid ${open ? C.Q : C.edge}`, background: open ? C.panelHi : "transparent", color: open ? C.Q : C.sub, cursor: "pointer" }}>
-        {open ? "\u25be  hide the deeper dive" : "\u25b8  go deeper \u2014 recap & a worked example"}
+        {open ? "▾  hide the deeper dive" : "▸  go deeper — recap & a worked example"}
       </button>
       {open && (
         <div style={{ marginTop: 12, background: C.panel, border: `1px solid ${C.edge}`, borderRadius: 10, padding: 18, maxWidth: 940 }}>
@@ -318,7 +318,7 @@ function TuneModule({ reduced }) {
       if (locked) {
         ctx.strokeStyle = SIG[i]; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, s.amp * R, 0, 7); ctx.stroke();
         ctx.fillStyle = SIG[i]; ctx.font = `11px ${FONT.mono}`; ctx.textAlign = "left";
-        ctx.fillText("\u25C9 locked to centre", 10, 18);
+        ctx.fillText("◉ locked to centre", 10, 18);
       }
     });
   }
@@ -333,7 +333,7 @@ function TuneModule({ reduced }) {
     const fx = drawSpectrum(ctx, w, h, spec, FS, {});
     // marker at DC
     ctx.fillStyle = C.ink; ctx.font = `10px ${FONT.mono}`; ctx.textAlign = "center";
-    ctx.fillText("\u25BC target here", fx(0), 18);
+    ctx.fillText("▼ target here", fx(0), 18);
   }
 
   useRaf((el) => drawPlane(el), !reduced);
@@ -345,9 +345,9 @@ function TuneModule({ reduced }) {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.s1, x: "Mixing (heterodyning): multiplying by a spinning arrow. The NCO is software generating that arrow at a rate you pick; mixing by f\u2080 subtracts f\u2080 from every frequency present." },
-          { t: "Intuition", c: C.Q, x: "It\u2019s tuning a dial, done in arithmetic after the fact. An old radio moved a physical oscillator; here you can re-tune the same recording to any station, as often as you like." },
-          { t: "Term", c: C.s3, x: "Baseband: a signal shifted onto 0 Hz. Getting your target to baseband is the whole point of tuning \u2014 then a simple low-pass filter can isolate it." },
+          { t: "Term", c: C.s1, x: "Mixing (heterodyning): multiplying by a spinning arrow. The NCO is software generating that arrow at a rate you pick; mixing by f₀ subtracts f₀ from every frequency present." },
+          { t: "Intuition", c: C.Q, x: "It’s tuning a dial, done in arithmetic after the fact. An old radio moved a physical oscillator; here you can re-tune the same recording to any station, as often as you like." },
+          { t: "Term", c: C.s3, x: "Baseband: a signal shifted onto 0 Hz. Getting your target to baseband is the whole point of tuning — then a simple low-pass filter can isolate it." },
         ]}
         n="05" title="Step 1 — tune: spin the whole picture until your target stops"
         body="Extraction begins by re-centering. Multiply every sample by a counter-rotating arrow e^(−j2πf₀n) — a numerically controlled oscillator, or NCO. This slides the entire spectrum sideways by f₀. Pick f₀ equal to your target's offset and that signal lands exactly on 0 Hz: its arrow stops spinning. Everything else keeps turning, now ready to be filtered away." />
@@ -378,12 +378,12 @@ function TuneModule({ reduced }) {
         </div>
       </div>
       <Deeper
-        recap="Tuning is a single complex multiply per sample: y[n] = x[n]\u00b7e^(\u2212j2\u03c0f\u2080n/Fs). Multiplying by a unit-magnitude exponential rotates every sample by a steadily growing angle, which slides the entire spectrum sideways by f\u2080. Park your target at 0 Hz and it stops spinning while everything else keeps moving \u2014 the first move in extracting it. Nothing is lost; the operation is exact and reversible."
-        example={`A tone at +3 Hz, sample rate Fs = 24, tune by f\u2080 = +3:
-   multiplier step per sample = e^(\u2212j2\u03c0\u00b73/24) = e^(\u2212j45\u00b0)
-   the +3 Hz tone  \u2192 lands at 0 Hz (stops rotating)
-   neighbour at +7 \u2192 shifts to +7 \u2212 3 = +4 Hz
-   neighbour at \u22122 \u2192 shifts to \u22122 \u2212 3 = \u22125 Hz
+        recap="Tuning is a single complex multiply per sample: y[n] = x[n]·e^(−j2πf₀n/Fs). Multiplying by a unit-magnitude exponential rotates every sample by a steadily growing angle, which slides the entire spectrum sideways by f₀. Park your target at 0 Hz and it stops spinning while everything else keeps moving — the first move in extracting it. Nothing is lost; the operation is exact and reversible."
+        example={`A tone at +3 Hz, sample rate Fs = 24, tune by f₀ = +3:
+   multiplier step per sample = e^(−j2π·3/24) = e^(−j45°)
+   the +3 Hz tone  → lands at 0 Hz (stops rotating)
+   neighbour at +7 → shifts to +7 − 3 = +4 Hz
+   neighbour at −2 → shifts to −2 − 3 = −5 Hz
 
 Everything slides left by 3 Hz together. Your target now sits
 at DC, ready to be isolated by the low-pass filter next.`}
@@ -446,7 +446,7 @@ function FilterModule({ reduced }) {
         notes={[
           { t: "Term", c: C.s1, x: "FIR = finite impulse response. The taps are its weights; each output blends nearby input samples by those weights. More taps = a longer blend = a sharper wall, at the cost of more arithmetic per sample." },
           { t: "Intuition", c: C.Q, x: "A low-pass filter is a smart blur: it smooths fast wiggles (high frequencies) while leaving slow ones (your centred signal) intact. The sinc shape is just the blur with the cleanest cutoff." },
-          { t: "Heads up", c: C.s2, x: "Inside the cutoff is the passband (kept), outside the stopband (rejected). No real filter is perfectly brick-walled \u2014 expect a transition slope and a little residual leakage." },
+          { t: "Heads up", c: C.s2, x: "Inside the cutoff is the passband (kept), outside the stopband (rejected). No real filter is perfectly brick-walled — expect a transition slope and a little residual leakage." },
         ]}
         n="06" title="Step 2 — filter: keep the centre, throw away the rest"
         body="With your target sitting at 0 Hz, a low-pass filter passes a narrow band around the centre and rejects everything offset from it — the neighbours you don't want. The filter is an FIR: a list of weights (taps) slid along the signal, each output a weighted average of nearby samples. Designing those taps as a windowed sinc gives a clean flat passband and a steep wall. Wider cutoff lets more through; more taps make the wall sharper." />
@@ -484,16 +484,16 @@ function FilterModule({ reduced }) {
         </div>
       </div>
       <Deeper
-        recap="A low-pass FIR filter replaces each output sample with a weighted blend of nearby inputs; the weights (taps) are a windowed sinc, the shape with the cleanest cutoff. Slow variations \u2014 your now-centred signal \u2014 pass through, while fast ones (the neighbours you shifted away) are smoothed out. More taps mean a longer blend and a sharper wall, at the cost of more multiply-adds per sample."
+        recap="A low-pass FIR filter replaces each output sample with a weighted blend of nearby inputs; the weights (taps) are a windowed sinc, the shape with the cleanest cutoff. Slow variations — your now-centred signal — pass through, while fast ones (the neighbours you shifted away) are smoothed out. More taps mean a longer blend and a sharper wall, at the cost of more multiply-adds per sample."
         example={`Cutoff fc = 2 Hz, sample rate Fs = 24. The ideal low-pass
-tap shape is a sinc, h[k] = 2(fc/Fs)\u00b7sinc(2(fc/Fs)\u00b7k), windowed.
+tap shape is a sinc, h[k] = 2(fc/Fs)·sinc(2(fc/Fs)·k), windowed.
 
 Effect on tones (gain):
-   signal centred at 0 Hz (inside fc)  \u2192 passes,   gain \u2248 1
-   neighbour now at +4 Hz (outside fc) \u2192 rejected, gain \u2248 0
+   signal centred at 0 Hz (inside fc)  → passes,   gain ≈ 1
+   neighbour now at +4 Hz (outside fc) → rejected, gain ≈ 0
 
 21 taps gives a gentle wall; 81 taps a steep one. No real
-filter is a perfect brick wall \u2014 expect a transition slope
+filter is a perfect brick wall — expect a transition slope
 and a little stopband leakage.`}
       />
     </div>
@@ -574,20 +574,20 @@ function DecimateModule({ reduced }) {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.s1, x: "Decimate-by-M keeps every Mth sample, lowering the rate to Fs/M; the new usable width is \u00B1Fs/2M (the Nyquist limit). Anything outside folds back in \u2014 which is exactly why you filter first." },
-          { t: "Intuition", c: C.Q, x: "Don\u2019t pay for bandwidth you threw away. After filtering, your signal fills a sliver of the band but you\u2019re still sampling for the whole thing; decimation right-sizes the data \u2014 often a 100\u00D7 saving." },
-          { t: "Try it", c: C.I, x: "Set M to \u00F78 with the cutoff wide and watch a neighbour fold into your channel (the alias warning fires). Narrow the cutoff first and the fold disappears: filter, then decimate \u2014 always that order." },
+          { t: "Term", c: C.s1, x: "Decimate-by-M keeps every Mth sample, lowering the rate to Fs/M; the new usable width is ±Fs/2M (the Nyquist limit). Anything outside folds back in — which is exactly why you filter first." },
+          { t: "Intuition", c: C.Q, x: "Don’t pay for bandwidth you threw away. After filtering, your signal fills a sliver of the band but you’re still sampling for the whole thing; decimation right-sizes the data — often a 100× saving." },
+          { t: "Try it", c: C.I, x: "Set M to ÷8 with the cutoff wide and watch a neighbour fold into your channel (the alias warning fires). Narrow the cutoff first and the fold disappears: filter, then decimate — always that order." },
         ]}
         n="07" title="Step 3 — decimate: drop the now-pointless sample rate"
         body="After filtering, all the high frequencies are gone, so most of the samples are redundant. Keep every Mth one and throw the rest away — the sample rate falls by M and the data shrinks to match the narrow signal you kept. Tune, filter, decimate: chained together, these three are a digital downconverter (DDC), the standard machine for pulling one channel out of a wideband capture." />
       <Panel label="The pipeline" style={{ marginBottom: 18 }}>
         <div className="iq-pipe">
           <PipeBox top="wideband IQ" bot={`${FS} MS/s`} color={C.sub} />
-          <PipeOp sym="\u2297" label="NCO" sub={`f₀ = ${sgn(f0, 1)}`} />
+          <PipeOp sym="⊗" label="NCO" sub={`f₀ = ${sgn(f0, 1)}`} />
           <PipeBox top="centred" bot={`${FS} MS/s`} color={C.sub} />
           <PipeOp sym="LPF" label="FIR" sub={`fc = ${sgn(fc, 1)}`} />
           <PipeBox top="narrowband" bot={`${FS} MS/s`} color={C.sub} />
-          <PipeOp sym={`\u2193${M}`} label="decimate" sub={`÷${M}`} />
+          <PipeOp sym={`↓${M}`} label="decimate" sub={`÷${M}`} />
           <PipeBox top="channel out" bot={`${(FS / M).toFixed(1)} MS/s`} color={C.ink} strong />
         </div>
       </Panel>
@@ -636,17 +636,17 @@ function DecimateModule({ reduced }) {
         </div>
       </div>
       <Deeper
-        recap="After tuning and filtering, your signal occupies only a sliver of the wideband stream, yet you're still storing samples at the full rate \u2014 mostly empty bandwidth. Decimating by M keeps every Mth sample, dropping the rate to Fs/M. As long as the filter already removed everything beyond \u00b1Fs/2M, nothing useful aliases, and you've turned a wideband capture into a compact baseband recording of one channel."
+        recap="After tuning and filtering, your signal occupies only a sliver of the wideband stream, yet you're still storing samples at the full rate — mostly empty bandwidth. Decimating by M keeps every Mth sample, dropping the rate to Fs/M. As long as the filter already removed everything beyond ±Fs/2M, nothing useful aliases, and you've turned a wideband capture into a compact baseband recording of one channel."
         example={`Wideband Fs = 24, your filtered channel is 3 Hz wide.
-Decimate by M = 4 \u2192 new rate Fs/M = 6 (new window \u22123 \u2026 +3).
+Decimate by M = 4 → new rate Fs/M = 6 (new window −3 … +3).
 
-Safety check: the filter must kill everything beyond \u00b1Fs/2M
-= \u00b13 Hz BEFORE downsampling. If a leftover tone at +5 Hz
-survived, after \u00f74 it folds to 5 \u2212 6 = \u22121 Hz \u2014 an alias
+Safety check: the filter must kill everything beyond ±Fs/2M
+= ±3 Hz BEFORE downsampling. If a leftover tone at +5 Hz
+survived, after ÷4 it folds to 5 − 6 = −1 Hz — an alias
 landing right on your signal.
 
-Done right, 24 \u2192 6 is a 4\u00d7 smaller stream carrying the same
-information. Tune \u2192 filter \u2192 decimate = a digital downconverter.`}
+Done right, 24 → 6 is a 4× smaller stream carrying the same
+information. Tune → filter → decimate = a digital downconverter.`}
       />
     </div>
   );
@@ -726,9 +726,9 @@ function FilterBankModule() {
     <div>
       <Lead
         notes={[
-          { t: "Term", c: C.s1, x: "Bin: one FFT output, a narrow frequency slot. N bins evenly tile the band and each behaves like a pre-tuned, pre-decimated channel \u2014 you get them all from a single transform." },
+          { t: "Term", c: C.s1, x: "Bin: one FFT output, a narrow frequency slot. N bins evenly tile the band and each behaves like a pre-tuned, pre-decimated channel — you get them all from a single transform." },
           { t: "Intuition", c: C.Q, x: "Rather than run the downconverter once per signal, the FFT hands you the entire band pre-sliced into channels at once. That parallel efficiency is why FFTs are everywhere in receivers." },
-          { t: "Heads up", c: C.s2, x: "A frequency between bins spills into its neighbours \u2014 spectral leakage. Tapering the sample edges (a window) softens the spill; a polyphase filter bank replaces that taper with a real filter for textbook-clean channels." },
+          { t: "Heads up", c: C.s2, x: "A frequency between bins spills into its neighbours — spectral leakage. Tapering the sample edges (a window) softens the spill; a polyphase filter bank replaces that taper with a real filter for textbook-clean channels." },
         ]}
         n="08" title="The shortcut — split the whole band into channels at once"
         body="Tuning one signal at a time is fine for one signal. To watch the entire band, run an FFT: it already divides the spectrum into N equally-spaced bins, and each bin behaves like its own tuned-and-decimated channel. A signal drops into whichever channel contains its frequency. The catch is leakage — a signal between bins bleeds into neighbours. A polyphase filter bank fixes that by putting a proper FIR in front of the FFT, and it's how wideband receivers crack a band into hundreds of channels efficiently." />
@@ -768,15 +768,15 @@ function FilterBankModule() {
         </div>
       </div>
       <Deeper
-        recap="Tuning-filtering-decimating extracts one channel. A single FFT does it for all of them at once: split a block of N samples into N frequency bins, and each bin behaves like one narrow channel already shifted to baseband and downsampled. It's the same channelization, shared across the whole band \u2014 which is why receivers that watch many signals at once use an FFT, and its efficient cousin the polyphase filter bank."
+        recap="Tuning-filtering-decimating extracts one channel. A single FFT does it for all of them at once: split a block of N samples into N frequency bins, and each bin behaves like one narrow channel already shifted to baseband and downsampled. It's the same channelization, shared across the whole band — which is why receivers that watch many signals at once use an FFT, and its efficient cousin the polyphase filter bank."
         example={`A 1024-point FFT on a 24 Hz-wide capture splits it into 1024
-bins, each (24/1024) \u2248 0.023 Hz wide \u2014 1024 ready-made channels.
-   bin k \u2194 frequency  k\u00b7Fs/N   (wrapping past Fs/2 to negative)
+bins, each (24/1024) ≈ 0.023 Hz wide — 1024 ready-made channels.
+   bin k ↔ frequency  k·Fs/N   (wrapping past Fs/2 to negative)
 
-Windowing first (e.g. Hann) keeps each bin\u2019s energy from
-leaking into its neighbours \u2014 the skirts shrink. Run the FFT
-block after block, stack the rows, and you\u2019ve rebuilt the
-waterfall: every channel\u2019s output over time, all at once.`}
+Windowing first (e.g. Hann) keeps each bin’s energy from
+leaking into its neighbours — the skirts shrink. Run the FFT
+block after block, stack the rows, and you’ve rebuilt the
+waterfall: every channel’s output over time, all at once.`}
       />
     </div>
   );
@@ -803,7 +803,7 @@ function Predict({ q, options, answer, why }) {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {options.map((o, i) => { const on = pick === i, correct = i === answer; const bc = pick == null ? C.edge : (correct ? C.D : (on ? C.warn : C.edge)); const tc = pick == null ? C.sub : (correct ? C.D : (on ? C.warn : C.faint)); return <button key={i} onClick={() => setPick(i)} style={{ fontFamily: FONT.body, fontSize: 12.5, padding: "6px 11px", borderRadius: 6, border: "1px solid " + bc, background: on ? C.panelHi : "transparent", color: tc, cursor: "pointer" }}>{o}</button>; })}
       </div>
-      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" \u2014 "}{why}</div>}
+      {pick != null && <div style={{ fontFamily: FONT.body, fontSize: 12.5, color: C.sub, marginTop: 10, lineHeight: 1.5 }}><span style={{ color: pick === answer ? C.D : C.warn, fontFamily: FONT.mono, fontSize: 11 }}>{pick === answer ? "correct" : "not quite"}</span>{" — "}{why}</div>}
     </div>
   );
 }
@@ -852,7 +852,7 @@ export default function App() {
           <nav style={{ display: "flex", gap: 6, marginTop: 22, flexWrap: "wrap", borderBottom: `1px solid ${C.edge}`, paddingBottom: 16 }}>
             {MODULES.map((m, i) => (
               <button key={m.id} className="iq-tab" data-on={active === i ? "1" : "0"} onClick={() => setActive(i)}>
-                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"\u2022"}</span>)}</span>
+                <span style={{ color: active === i ? C.Q : C.faint, marginRight: 7 }}>{m.id}</span>{m.label}<span title="math intensity (light / medium / heavy)" style={{ marginLeft: 7, letterSpacing: 1, fontSize: 9 }}>{[0, 1, 2].map((_d) => <span key={_d} style={{ color: _d < DIFF[i] ? (DIFF[i] === 1 ? C.D : DIFF[i] === 2 ? C.I : C.warn) : C.gridFaint }}>{"•"}</span>)}</span>
               </button>
             ))}
           </nav>
